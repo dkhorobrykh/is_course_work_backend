@@ -1,0 +1,55 @@
+jwt:
+  access:
+    life-time: ${JWT_ACCESS_LIFETIME}
+    private: ${JWT_ACCESS_PRIVATE}
+    public: ${JWT_ACCESS_PUBLIC}
+  refresh:
+    life-time: ${JWT_REFRESH_LIFETIME}
+    private: ${JWT_REFRESH_PRIVATE}
+    public: ${JWT_REFRESH_PUBLIC}
+
+project:
+  backend:
+    url: ${BACKEND_URL:localhost}
+    port: ${BACKEND_PORT:8081}
+
+logging:
+  level:
+    org:
+      springframework: ERROR
+
+server:
+  error:
+    include-message: always
+  servlet:
+    context-path: /api
+
+socket:
+  host: ${SOCKET_HOST:localhost}
+  port: ${SOCKET_PORT:8087}
+
+spring:
+  application:
+    name: course_work
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 5000
+      maximum-pool-size: 10
+    password: ${POSTGRES_CONNECT_PASSWORD}
+    url: ${POSTGRES_CONNECT_URL}
+    username: ${POSTGRES_CONNECT_USER}
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+  jpa:
+    generate-ddl: false
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    show-sql: false
+
+springdoc:
+  swagger-ui:
+    operations-sorter: alpha
+    tags-sorter: alpha
