@@ -8,21 +8,24 @@ jwt:
     private: ${JWT_REFRESH_PRIVATE}
     public: ${JWT_REFRESH_PUBLIC}
 
-project:
-  backend:
-    url: ${BACKEND_URL:localhost}
-    port: ${BACKEND_PORT:8081}
+#project:
+#  backend:
+#    url: ${BACKEND_URL:localhost}
+#    port: ${BACKEND_PORT:8081}
 
 logging:
   level:
     org:
-      springframework: ERROR
+      springframework: INFO
 
 server:
   error:
     include-message: always
   servlet:
     context-path: /api
+#  url: ${BACKEND_URL:localhost}
+  port: ${BACKEND_PORT:8081}
+  address: ${BACKEND_URL:localhost}
 
 socket:
   host: ${SOCKET_HOST:localhost}
@@ -53,3 +56,5 @@ springdoc:
   swagger-ui:
     operations-sorter: alpha
     tags-sorter: alpha
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

@@ -14,17 +14,10 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
-    @Value("${project.backend.url}")
-    private String url;
-
-    @Value("${project.backend.port}")
-    private String port;
 
     @Bean
     public OpenAPI customOpenAPI() {
-        String backendUrl = url + ":" + port;
         Server server = new Server();
-        server.setUrl(backendUrl);
 
         return new OpenAPI()
 //                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
