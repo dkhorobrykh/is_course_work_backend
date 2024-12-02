@@ -14,11 +14,21 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
+    @Value("${server.address:localhost}")
+    private String address;
+
+    @Value("${server.port:8080}")
+    private String port;
+
+    @Value("${server.servlet.context-path:/}")
+    private String contextPath;
 
     @Bean
     public OpenAPI customOpenAPI() {
-        Server server = new Server();
+        String serverUrl = "http://" + address + ":" + port + contextPath;
 
+        Server server = new Server();
+        server.setUrl(serverUrl);
         return new OpenAPI()
 //                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
 //                .components(new Components()
