@@ -11,7 +11,7 @@ import java.util.Objects;
 
 @Entity
 @Table(
-        name = "is_course_table"
+        name = "is_course_role"
 )
 @AllArgsConstructor
 @NoArgsConstructor

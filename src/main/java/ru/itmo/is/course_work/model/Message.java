@@ -33,6 +33,6 @@ public class Message {
 
     @Builder.Default
     @Column(name = "creation_datetime", nullable = false)
-    private Instant creationDatetime;
+    private Instant creationDatetime = Instant.now();
 
 }
