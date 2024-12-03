@@ -10,7 +10,7 @@ import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(
-        name = "flight_status"
+        name = "is_course_flight_status"
 )
 @AllArgsConstructor
 @NoArgsConstructor

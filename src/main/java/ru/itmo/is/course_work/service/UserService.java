@@ -1,0 +1,26 @@
+package ru.itmo.is.course_work.service;
+
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import ru.itmo.is.course_work.model.User;
+import ru.itmo.is.course_work.repository.UserRepository;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public @NonNull User getByLogin(@NonNull String login) {
+        return userRepository.findByLogin(login)
+                .orElseThrow(() -> new RuntimeException("User by login not found"));
+    }
+
+    public @NonNull User getById(@NonNull Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User by id not found"));
+    }
+}

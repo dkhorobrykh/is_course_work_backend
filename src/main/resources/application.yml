@@ -8,11 +8,6 @@ jwt:
     private: ${JWT_REFRESH_PRIVATE}
     public: ${JWT_REFRESH_PUBLIC}
 
-#project:
-#  backend:
-#    url: ${BACKEND_URL:localhost}
-#    port: ${BACKEND_PORT:8081}
-
 logging:
   level:
     org:
@@ -23,7 +18,6 @@ server:
     include-message: always
   servlet:
     context-path: /api
-#  url: ${BACKEND_URL:localhost}
   port: ${BACKEND_PORT:8081}
   address: ${BACKEND_URL:localhost}
 
