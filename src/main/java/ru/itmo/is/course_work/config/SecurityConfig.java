@@ -3,6 +3,7 @@ package ru.itmo.is.course_work.config;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -27,14 +28,13 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
                         authz
-                                .requestMatchers("/api/authorization/confirm", "/api/authorization/token")
-                                .permitAll()
+                                .requestMatchers(HttpMethod.POST, "/authorization/confirm", "/authorization/token").permitAll()
 
-//                                .requestMatchers("/api/swagger**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
-                                .requestMatchers("/api/demo/*").authenticated() // todo
+                                .requestMatchers("/demo/**").authenticated()
 
-                                .anyRequest().permitAll()
+                                .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 //                .addFilterAfter(headersFilter, JwtFilter.class)

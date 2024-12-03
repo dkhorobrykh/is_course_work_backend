@@ -49,6 +49,7 @@ spring:
 springdoc:
   swagger-ui:
     operations-sorter: alpha
+    path: /swagger-ui
     tags-sorter: alpha
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
