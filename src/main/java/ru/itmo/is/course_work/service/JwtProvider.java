@@ -8,6 +8,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import ru.itmo.is.course_work.exception.CustomException;
+import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.User;
 
 import java.security.*;
@@ -95,11 +97,11 @@ public class JwtProvider {
                     .parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException expEx) {
-            log.info("Token \"%s\" expired".formatted(token));
-            throw new RuntimeException("Token expired");
+            log.info("Token \"{}\" expired", token);
+            throw new CustomException(ExceptionEnum.TOKEN_EXPIRED);
         } catch (Exception e) {
-            log.info("Invalid token \"%s\"".formatted(token));
-            throw new RuntimeException("Invalid token");
+            log.info("Invalid token \"{}\"", token);
+            throw new CustomException(ExceptionEnum.INVALID_TOKEN);
         }
     }
 
