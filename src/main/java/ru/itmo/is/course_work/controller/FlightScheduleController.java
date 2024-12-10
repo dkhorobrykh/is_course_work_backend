@@ -11,7 +11,7 @@ import ru.itmo.is.course_work.service.FlightScheduleService;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/admin/schedules")
+@RequestMapping("/admin/schedules")
 @RequiredArgsConstructor
 public class FlightScheduleController {
 

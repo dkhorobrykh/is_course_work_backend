@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.itmo.is.course_work.exception.CustomException;
+import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.RefreshStorage;
 import ru.itmo.is.course_work.model.User;
 import ru.itmo.is.course_work.model.dto.JwtRequest;
@@ -31,10 +33,8 @@ public class AuthService {
         String password = jwtRequest.getPassword();
         String hashedPassword = hashPassword(password);
 
-        log.info(hashedPassword);
-
         if (!checkCredentials(login, hashedPassword))
-            throw new RuntimeException("Bad credentials");
+            throw new CustomException(ExceptionEnum.BAD_CREDENTIALS);
 
         return getJwtResponse(login);
     }
@@ -45,7 +45,8 @@ public class AuthService {
             byte[] hash = digest.digest(password.getBytes(StandardCharsets.UTF_8));
             return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("SHA-256 algorithm not found", e);
+            log.error("SHA-256 algorithm not found");
+            throw new CustomException(ExceptionEnum.SERVER_ERROR);
         }
     }
 
@@ -79,7 +80,7 @@ public class AuthService {
                 Optional<RefreshStorage> oldToken = refreshStorageRepository.findByRefreshToken(refreshToken);
                 if (oldToken.isEmpty()) {
                     log.error("Ошибка обновления существующего refresh токена в бд. Refresh токен: {}", refreshToken);
-                    throw new RuntimeException("Ошибка обновления существующего refresh токена в бд");
+                    throw new CustomException(ExceptionEnum.SERVER_ERROR);
                 }
                 oldToken.get().setRefreshToken(newRefreshToken);
                 refreshStorageRepository.saveAndFlush(oldToken.get());
@@ -87,7 +88,7 @@ public class AuthService {
                 return new JwtResponse(accessToken, newRefreshToken);
             }
         }
-        throw new RuntimeException("Invalid token");
+        throw new CustomException(ExceptionEnum.INVALID_TOKEN);
     }
 
     public List<String> getRefreshToken(Long userId) {
@@ -104,10 +105,13 @@ public class AuthService {
 
     public void signOutFromAllDevices(String refreshToken) {
         if (jwtProvider.validateRefreshToken(refreshToken)) {
-            refreshStorageRepository.deleteByUserId(Optional.ofNullable(RoleService.getCurrentUser()).orElseThrow(() -> new RuntimeException("signOutFromAllDevices error")).getId());
+            refreshStorageRepository.deleteByUserId(Optional.ofNullable(RoleService.getCurrentUser()).orElseThrow(() -> {
+                log.error("signOutFromAllDevices error");
+                return new CustomException(ExceptionEnum.SERVER_ERROR);
+            }).getId());
             saveRefreshToken(RoleService.getCurrentUser().getId(), refreshToken);
         } else {
-            throw new RuntimeException("Invalid token");
+            throw new CustomException(ExceptionEnum.INVALID_TOKEN);
         }
     }
 }
