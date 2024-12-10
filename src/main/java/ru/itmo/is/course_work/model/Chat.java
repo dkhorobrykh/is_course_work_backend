@@ -34,8 +34,9 @@ public class Chat {
     @Column(name = "creation_datetime", nullable = false)
     private Instant creationDatetime = Instant.now();
 
-    @OneToMany(mappedBy = "chat", orphanRemoval = true)
+    @OneToMany(mappedBy = "chat", orphanRemoval = true, fetch = FetchType.EAGER)
     @OrderBy("creationDatetime")
+    @Builder.Default
     private List<Message> messages = new ArrayList<>();
 
 }

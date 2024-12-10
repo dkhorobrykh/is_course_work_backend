@@ -40,8 +40,8 @@ public class FlightScheduleController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSchedule(@PathVariable Long id) {
+    public ResponseEntity<?> deleteSchedule(@PathVariable Long id) {
         flightScheduleService.deleteSchedule(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(null);
     }
 }
