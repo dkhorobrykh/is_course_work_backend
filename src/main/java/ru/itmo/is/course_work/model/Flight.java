@@ -46,7 +46,7 @@ public class Flight {
     @Column(name = "arrival_datetime", nullable = false)
     private Instant arrivalDatetime;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "is_course_flight_workers",
             joinColumns = @JoinColumn(name = "flight_id"),
             inverseJoinColumns = @JoinColumn(name = "worker_id"))
