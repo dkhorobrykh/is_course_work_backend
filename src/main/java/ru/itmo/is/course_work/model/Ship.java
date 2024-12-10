@@ -46,10 +46,11 @@ public class Ship {
     @Column(name = "photo")
     private String photo;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "is_course_ship_service_classes",
             joinColumns = @JoinColumn(name = "ship_id"),
             inverseJoinColumns = @JoinColumn(name = "service_class_id"))
     private Set<ServiceClass> serviceClasses = new LinkedHashSet<>();
+
 
 }
