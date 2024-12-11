@@ -1,7 +1,9 @@
 package ru.itmo.is.course_work.service;
 
 import io.jsonwebtoken.Claims;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,11 +13,14 @@ import ru.itmo.is.course_work.model.RefreshStorage;
 import ru.itmo.is.course_work.model.User;
 import ru.itmo.is.course_work.model.dto.JwtRequest;
 import ru.itmo.is.course_work.model.dto.JwtResponse;
+import ru.itmo.is.course_work.model.dto.RegistrationDto;
 import ru.itmo.is.course_work.repository.RefreshStorageRepository;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -113,5 +118,35 @@ public class AuthService {
         } else {
             throw new CustomException(ExceptionEnum.INVALID_TOKEN);
         }
+    }
+
+    public @NonNull User registerNewUser(@Valid @NonNull RegistrationDto dto) {
+        var login = dto.getLogin();
+        if (!userService.checkLoginUnique(login))
+            throw new CustomException(ExceptionEnum.LOGIN_ALREADY_EXISTS);
+
+        var email = dto.getEmail();
+        if (!userService.checkEmailUnique(email))
+            throw new CustomException(ExceptionEnum.EMAIL_ALREADY_EXISTS);
+
+        var dateOfBirth = dto.getDateOfBirth();
+        if (LocalDate.now().isBefore(dateOfBirth))
+            throw new CustomException(ExceptionEnum.DATE_OF_BIRTH_IN_FUTURE);
+
+        var hashedPassword = hashPassword(dto.getPassword());
+
+        var newUser = User.builder()
+
+                .login(dto.getLogin())
+                .password(hashedPassword)
+                .firstName(dto.getFirstName())
+                .lastName(dto.getLastName())
+                .surname(dto.getSurname())
+                .dateOfBirth(dateOfBirth)
+                .email(email)
+
+                .build();
+
+        return userService.save(newUser);
     }
 }

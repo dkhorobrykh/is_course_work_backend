@@ -3,6 +3,7 @@ package ru.itmo.is.course_work.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
@@ -17,6 +18,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@Jacksonized
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,7 +57,7 @@ public class User {
     @NotEmpty
     private String email;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "is_course_user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
