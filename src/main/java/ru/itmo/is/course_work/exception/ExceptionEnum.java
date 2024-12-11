@@ -16,6 +16,8 @@ public enum ExceptionEnum {
     UNAUTHORIZED("Авторизация не пройдена", HttpStatus.UNAUTHORIZED),
     FORBIDDEN("Доступ к данному ресурсу запрещен", HttpStatus.FORBIDDEN),
     CHAT_NOT_FOUND("Чат не найден", HttpStatus.NOT_FOUND),
+    PREFLIGHT_CHECK_FAILED_FUEL("Статус топлива небезопасен.", HttpStatus.BAD_REQUEST),
+    PREFLIGHT_CHECK_FAILED_ENGINE("Состояние двигателя вызывает опасения.", HttpStatus.BAD_REQUEST),
     SHIP_NOT_FOUND("Корабль не найден", HttpStatus.NOT_FOUND),
     SHIP_STATUS_NOT_FOUND("Статус корабля не найден", HttpStatus.NOT_FOUND),
     SHIP_TYPE_NOT_FOUND("Указанный тип корабля не найден", HttpStatus.NOT_FOUND),
