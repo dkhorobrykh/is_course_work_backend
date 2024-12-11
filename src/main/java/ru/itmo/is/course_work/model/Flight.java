@@ -53,15 +53,10 @@ public class Flight {
             inverseJoinColumns = @JoinColumn(name = "worker_id"))
     private Set<Worker> worker = new LinkedHashSet<>();
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "route_id", nullable = false)
-    private Route route;
-
     @Column(name = "total_seats", nullable = false)
     private int totalSeats;
 
     @Column(name = "booked_seats", nullable = false)
     private int bookedSeats;
-
 
 }

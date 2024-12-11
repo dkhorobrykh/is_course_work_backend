@@ -32,6 +32,10 @@ public enum ExceptionEnum {
     EMAIL_ALREADY_EXISTS("Пользователь с таким email уже существует", HttpStatus.CONFLICT),
     DATE_OF_BIRTH_IN_FUTURE("Переданная дата рождения находится в будущем", HttpStatus.BAD_REQUEST),
     VALIDATION_EXCEPTION("Ошибка валидации данных", HttpStatus.BAD_REQUEST),
+    USER_DOC_TYPE_NOT_FOUND("Тип документа не найден", HttpStatus.NOT_FOUND),
+    USER_DOC_NOT_FOUND("Документ не найден", HttpStatus.NOT_FOUND),
+    ISSUE_DATE_IN_FUTURE("Дата выдачи не может быть позже текущей", HttpStatus.BAD_REQUEST),
+    ISSUE_DATE_MUST_BE_BEFORE_EXPIRATION_DATE("Дата выдачи должна быть раньше даты истечения срока действия документа", HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 

@@ -43,5 +43,4 @@ public class FlightSchedule {
     @ManyToOne(optional = false)
     @JoinColumn(name = "schedule_status_id", nullable = false)
     private ScheduleStatus scheduleStatus;
-
 }
