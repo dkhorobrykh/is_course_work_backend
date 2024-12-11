@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import ru.itmo.is.course_work.filter.ExceptionHandlerFilter;
 import ru.itmo.is.course_work.filter.JwtFilter;
 
 @Configuration
@@ -19,6 +20,7 @@ import ru.itmo.is.course_work.filter.JwtFilter;
 @AllArgsConstructor
 public class SecurityConfig {
     private final JwtFilter jwtFilter;
+    private final ExceptionHandlerFilter exceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -28,7 +30,7 @@ public class SecurityConfig {
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
                         authz
-                                .requestMatchers(HttpMethod.POST, "/authorization/confirm", "/authorization/token").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/authorization/confirm", "/authorization/token", "/authorization/register").permitAll()
 
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 
@@ -36,9 +38,9 @@ public class SecurityConfig {
 
                                 .anyRequest().authenticated()
                 )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
 //                .addFilterAfter(headersFilter, JwtFilter.class)
-//                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
+                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
 
         return http.build();

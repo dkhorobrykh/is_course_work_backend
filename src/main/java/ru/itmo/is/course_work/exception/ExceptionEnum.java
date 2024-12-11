@@ -24,6 +24,9 @@ public enum ExceptionEnum {
     FLIGHT_NOT_FOUND("Рейс не найден", HttpStatus.NOT_FOUND),
     WRONG_INSURANCE_PROGRAM_IS_NOT_ACTIVE_AT_FLIGHT_DATE("Программа страхования недоступна в момент перелета", HttpStatus.BAD_REQUEST),
     INSURANCE_PROGRAM_IS_NOT_ACTIVE("Программа страхования не активна", HttpStatus.BAD_REQUEST),
+    LOGIN_ALREADY_EXISTS("Пользователь с таким логином уже существует", HttpStatus.CONFLICT),
+    EMAIL_ALREADY_EXISTS("Пользователь с таким email уже существует", HttpStatus.CONFLICT),
+    DATE_OF_BIRTH_IN_FUTURE("Переданная дата рождения находится в будущем", HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
