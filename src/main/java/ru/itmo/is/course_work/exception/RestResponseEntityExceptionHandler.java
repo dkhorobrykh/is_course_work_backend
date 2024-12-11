@@ -61,7 +61,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 
         ErrorDetails errorDetails = new ErrorDetails(Clock.systemDefaultZone().instant(),
                 ExceptionEnum.VALIDATION_EXCEPTION,
-                "[%s]".formatted(StringUtils.join(errorList, ", ")));
+                "%s".formatted(StringUtils.join(errorList, ", ")));
 
         return handleExceptionInternal(ex, errorDetails, headers, HttpStatus.BAD_REQUEST, request);
     }
