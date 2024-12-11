@@ -2,10 +2,8 @@ package ru.itmo.is.course_work.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 
 @Entity
 @Table(
@@ -15,6 +13,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@Jacksonized
 public class InsuranceIssued {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
