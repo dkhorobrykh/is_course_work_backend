@@ -17,11 +17,11 @@ public class ShipDto implements Serializable {
     @NotEmpty
     @Length(max = 100)
     String name;
-    ShipTypeDto shipType;
+    Long shipTypeId;
     @NotEmpty
     @Length(max = 50)
     String number;
     Instant registrationDatetime;
     String photo;
-    Set<ServiceClassDto> serviceClasses;
+    Set<Long> serviceClassIds;
 }

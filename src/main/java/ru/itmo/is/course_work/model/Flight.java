@@ -10,6 +10,7 @@ import lombok.Setter;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
+import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -51,5 +52,16 @@ public class Flight {
             joinColumns = @JoinColumn(name = "flight_id"),
             inverseJoinColumns = @JoinColumn(name = "worker_id"))
     private Set<Worker> worker = new LinkedHashSet<>();
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "route_id", nullable = false)
+    private Route route;
+
+    @Column(name = "total_seats", nullable = false)
+    private int totalSeats;
+
+    @Column(name = "booked_seats", nullable = false)
+    private int bookedSeats;
+
 
 }
