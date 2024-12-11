@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.is.course_work.model.ShipStatus;
+import ru.itmo.is.course_work.model.dto.ShipStatusUpdateRequest;
 import ru.itmo.is.course_work.service.ShipStatusService;
 
 @RestController
@@ -22,10 +23,7 @@ public class ShipStatusController {
             @PathVariable Long shipId,
             @RequestBody ShipStatusUpdateRequest request) {
         ShipStatus updatedStatus = shipStatusService.updateShipStatus(
-                shipId, request.fuelLevel());
+                shipId, request.getFuelLevel());
         return ResponseEntity.ok(updatedStatus);
     }
-}
-
-record ShipStatusUpdateRequest(Double fuelLevel) {
 }

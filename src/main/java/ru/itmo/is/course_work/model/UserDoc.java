@@ -2,10 +2,7 @@ package ru.itmo.is.course_work.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class UserDoc {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,4 +41,9 @@ public class UserDoc {
 
     @Column(name = "expiration_date", nullable = false)
     private LocalDate expirationDate;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
 }
