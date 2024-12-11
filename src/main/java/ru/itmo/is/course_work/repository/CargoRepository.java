@@ -9,4 +9,5 @@ public interface CargoRepository extends JpaRepository<Cargo, Long> {
     List<Cargo> findAllBySender_Id(Long id);
     List<Cargo> findAllByRecipient_Id(Long id);
     List<Cargo> findAllByFlight_Id(Long id);
+    List<Cargo> findAllByFlightIsNull();
 }

@@ -52,5 +52,16 @@ public class Ship {
     @OneToOne(mappedBy = "ship", cascade = CascadeType.ALL, orphanRemoval = true)
     private ShipStatus shipStatus;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "air_type_id", nullable = false)
+    private AirType airType;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "temperature_type_id", nullable = false)
+    private TemperatureType temperatureType;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "habitat_id", nullable = false)
+    private Habitat habitat;
 
 }

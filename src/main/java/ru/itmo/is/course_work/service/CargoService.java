@@ -3,6 +3,7 @@ package ru.itmo.is.course_work.service;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
@@ -14,6 +15,7 @@ import ru.itmo.is.course_work.repository.CargoRepository;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -24,6 +26,7 @@ public class CargoService {
     private final CargoConditionRepository cargoConditionRepository;
     private final UserService userService;
     private final NatureService natureService;
+    private final FlightService flightService;
 
     public Cargo getCargoById(Long id) {
         return cargoRepository.findById(id)
@@ -114,6 +117,26 @@ public class CargoService {
         }
 
         return sb.toString();
+    }
+
+    @Scheduled(fixedDelayString = "${task.assignCargoToFlightSeconds}", timeUnit = TimeUnit.SECONDS)
+    public void assignCargoToFlightTask() {
+        log.debug("Начало назначения грузов на рейсы");
+
+        var freeCargos = cargoRepository.findAllByFlightIsNull();
+
+        for (var cargo : freeCargos) {
+            var flight = flightService.findSuitableFlightForCargo(cargo);
+
+            if (flight != null) {
+                cargo.setFlight(flight);
+                log.info("Груз с номером [{}] и id [{}] назначен на рейс с номером [{}] и id [{}]", cargo.getName(), cargo.getId(), flight.getName(), flight.getId());
+                cargoRepository.saveAndFlush(cargo);
+            }
+
+        }
+
+        log.debug("Окончание назначения грузов на рейсы");
     }
 
 }
