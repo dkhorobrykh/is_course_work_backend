@@ -3,7 +3,6 @@ package ru.itmo.is.course_work.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
-import lombok.extern.jackson.Jacksonized;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
@@ -11,11 +10,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Entity
-@Table(
-        name = "is_course_ship"
-)
+@Table(name = "is_course_ship")
+@NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
 @Builder
@@ -51,6 +48,9 @@ public class Ship {
             joinColumns = @JoinColumn(name = "ship_id"),
             inverseJoinColumns = @JoinColumn(name = "service_class_id"))
     private Set<ServiceClass> serviceClasses = new LinkedHashSet<>();
+
+    @OneToOne(mappedBy = "ship", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ShipStatus shipStatus;
 
 
 }
