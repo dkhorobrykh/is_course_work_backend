@@ -22,4 +22,5 @@ public class CargoDto implements Serializable {
     Long insuranceProgramId;
     Long shipId;
     CargoConditionDto cargoCondition;
+    FlightDto flight;
 }

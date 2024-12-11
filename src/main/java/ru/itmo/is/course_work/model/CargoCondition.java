@@ -1,10 +1,7 @@
 package ru.itmo.is.course_work.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Table(
@@ -14,6 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class CargoCondition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
