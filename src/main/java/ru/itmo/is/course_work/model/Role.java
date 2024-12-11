@@ -19,6 +19,8 @@ import java.util.Objects;
 @Setter
 @Builder
 public class Role {
+    public final static String ADMIN = "ADMIN";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

@@ -17,6 +17,13 @@ public enum ExceptionEnum {
     FORBIDDEN("Доступ к данному ресурсу запрещен", HttpStatus.FORBIDDEN),
     CHAT_NOT_FOUND("Чат не найден", HttpStatus.NOT_FOUND),
     CHAT_WITH_THE_SAME_USER("Чат с одинаковым пользователем создать нельзя", HttpStatus.BAD_REQUEST),
+    PASSENGER_AND_CARGO_SHOULD_BE_IN_DIFFERENT_INSURANCES("Пассажир и груз должны быть оформлены разными страховками", HttpStatus.BAD_REQUEST),
+    INSURANCE_PROGRAM_NOT_FOUND("Страховая программа не найдена", HttpStatus.NOT_FOUND),
+    PASSENGER_NOT_FOUND("Пассажир не найден", HttpStatus.NOT_FOUND),
+    CARGO_NOT_FOUND("Груз не найден", HttpStatus.NOT_FOUND),
+    FLIGHT_NOT_FOUND("Рейс не найден", HttpStatus.NOT_FOUND),
+    WRONG_INSURANCE_PROGRAM_IS_NOT_ACTIVE_AT_FLIGHT_DATE("Программа страхования недоступна в момент перелета", HttpStatus.BAD_REQUEST),
+    INSURANCE_PROGRAM_IS_NOT_ACTIVE("Программа страхования не активна", HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
