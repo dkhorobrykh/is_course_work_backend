@@ -7,18 +7,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
-import ru.itmo.is.course_work.model.ServiceClass;
-import ru.itmo.is.course_work.model.Ship;
-import ru.itmo.is.course_work.model.ShipStatus;
+import ru.itmo.is.course_work.model.*;
 import ru.itmo.is.course_work.model.dto.ShipDto;
-import ru.itmo.is.course_work.repository.ShipRepository;
-import ru.itmo.is.course_work.repository.ShipStatusRepository;
-import ru.itmo.is.course_work.repository.ServiceClassRepository;
-import ru.itmo.is.course_work.repository.ShipTypeRepository;
-import ru.itmo.is.course_work.model.dto.ShipTypeDto;
-import ru.itmo.is.course_work.model.dto.ServiceClassDto;
+import ru.itmo.is.course_work.repository.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -29,13 +23,15 @@ public class ShipService {
     private final ShipStatusRepository shipStatusRepository;
     private final ShipTypeRepository shipTypeRepository;
     private final ServiceClassRepository serviceClassRepository;
+    private final UserDataRepository userDataRepository;
 
     @Autowired
-    public ShipService(ShipRepository shipRepository, ShipStatusRepository shipStatusRepository, ShipTypeRepository shipTypeRepository, ServiceClassRepository serviceClassRepository) {
+    public ShipService(ShipRepository shipRepository, ShipStatusRepository shipStatusRepository, ShipTypeRepository shipTypeRepository, ServiceClassRepository serviceClassRepository, UserDataRepository userDataRepository) {
         this.shipRepository = shipRepository;
         this.shipStatusRepository = shipStatusRepository;
         this.shipTypeRepository = shipTypeRepository;
         this.serviceClassRepository = serviceClassRepository;
+        this.userDataRepository = userDataRepository;
     }
 
     @Transactional
@@ -80,5 +76,29 @@ public class ShipService {
                         .collect(Collectors.toSet())
         );
     }
-}
 
+    public List<Ship> findShipsForPassenger(UserData userData) {
+        PhysiologicalType physiologicalType = userData.getPhysiologicalType();
+        TemperatureType temperatureType = physiologicalType.getTemperatureType();
+        Habitat habitat = physiologicalType.getHabitat();
+        AirType airType = physiologicalType.getAirType();
+
+        if (temperatureType.getMinTemperature() > 20 && temperatureType.getMaxTemperature() < 30) {
+            return shipRepository.findByServiceClasses_NameIn(List.of("PREMIUM", "VIP"));
+        }
+
+        if ("Earth-like".equalsIgnoreCase(habitat.getName()) && "Oxygen".equalsIgnoreCase(airType.getName())) {
+            return shipRepository.findByServiceClasses_NameIn(List.of("VIP", "PREMIUM"));
+        }
+
+        if ("Desert".equalsIgnoreCase(habitat.getName()) && "Nitrogen".equalsIgnoreCase(airType.getName())) {
+            return shipRepository.findByServiceClasses_NameIn(List.of("PREMIUM"));
+        }
+
+        if ("Oceanic".equalsIgnoreCase(habitat.getName()) && "Carbon Dioxide".equalsIgnoreCase(airType.getName())) {
+            return shipRepository.findByServiceClasses_NameIn(List.of("VIP"));
+        }
+
+        return shipRepository.findAll();
+    }
+}
