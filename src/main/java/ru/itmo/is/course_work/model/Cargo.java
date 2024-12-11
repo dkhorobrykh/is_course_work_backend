@@ -2,10 +2,7 @@ package ru.itmo.is.course_work.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
@@ -16,6 +13,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Cargo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,6 +39,10 @@ public class Cargo {
     @ManyToOne
     @JoinColumn(name = "insurance_program_id")
     private InsuranceProgram insuranceProgram;
+
+    @ManyToOne
+    @JoinColumn(name = "flight_id")
+    private Flight flight;
 
     @ManyToOne
     @JoinColumn(name = "ship_id")

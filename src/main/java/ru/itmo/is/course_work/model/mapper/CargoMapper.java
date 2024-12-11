@@ -4,6 +4,8 @@ import org.mapstruct.*;
 import ru.itmo.is.course_work.model.Cargo;
 import ru.itmo.is.course_work.model.dto.CargoDto;
 
+import java.util.List;
+
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CargoMapper {
     @Mapping(source = "shipId", target = "ship.id")
@@ -14,6 +16,8 @@ public interface CargoMapper {
 
     @InheritInverseConfiguration(name = "toEntity")
     CargoDto toDto(Cargo cargo);
+
+    List<CargoDto> toDto(List<Cargo> cargo);
 
     @InheritConfiguration(name = "toEntity")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)

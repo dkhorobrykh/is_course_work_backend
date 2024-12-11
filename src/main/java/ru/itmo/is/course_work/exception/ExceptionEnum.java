@@ -36,6 +36,9 @@ public enum ExceptionEnum {
     USER_DOC_NOT_FOUND("Документ не найден", HttpStatus.NOT_FOUND),
     ISSUE_DATE_IN_FUTURE("Дата выдачи не может быть позже текущей", HttpStatus.BAD_REQUEST),
     ISSUE_DATE_MUST_BE_BEFORE_EXPIRATION_DATE("Дата выдачи должна быть раньше даты истечения срока действия документа", HttpStatus.BAD_REQUEST),
+    AIR_TYPE_NOT_FOUND("Тип воздуха не найден", HttpStatus.NOT_FOUND),
+    HABITAT_NOT_FOUND("Тип среды обитания не найден", HttpStatus.NOT_FOUND),
+    TEMPERATURE_TYPE_NOT_FOUND("Тип температурных условий не найден", HttpStatus.NOT_FOUND),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
