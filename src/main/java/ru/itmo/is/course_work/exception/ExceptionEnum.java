@@ -27,6 +27,7 @@ public enum ExceptionEnum {
     LOGIN_ALREADY_EXISTS("Пользователь с таким логином уже существует", HttpStatus.CONFLICT),
     EMAIL_ALREADY_EXISTS("Пользователь с таким email уже существует", HttpStatus.CONFLICT),
     DATE_OF_BIRTH_IN_FUTURE("Переданная дата рождения находится в будущем", HttpStatus.BAD_REQUEST),
+    VALIDATION_EXCEPTION("Ошибка валидации данных", HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
