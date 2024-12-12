@@ -37,6 +37,11 @@ public class ShipStatus {
     @Column(name = "engine_status", nullable = false)
     private EngineStatus engineStatus;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "radiation_resistance", nullable = false)
+    private RadiationResistance radiationResistance;
+
+
     @Column(name = "last_updated", nullable = false)
     private Instant lastUpdated;
 
@@ -52,5 +57,10 @@ public class ShipStatus {
         OK,
         WARNING,
         CRITICAL
+    }
+
+    public enum RadiationResistance {
+        RESISTANT,
+        NON_RESISTANT
     }
 }

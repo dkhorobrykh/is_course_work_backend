@@ -3,7 +3,6 @@ package ru.itmo.is.course_work.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.itmo.is.course_work.model.UserData;
 import ru.itmo.is.course_work.service.PreFlightCheckService;
 
 @RestController
@@ -16,6 +15,13 @@ public class PreFlightCheckController {
     @PostMapping("/{scheduleId}/check")
     public ResponseEntity<String> performPreFlightCheck(@PathVariable Long scheduleId) {
         preFlightCheckService.performPreFlightChecks(scheduleId);
-        return ResponseEntity.ok("Предполетные проверки успешно выполнены.");
+        String message = "Предполетные проверки успешно выполнены.";
+
+        if (preFlightCheckService.isProtectionAdded()) {
+            message += " Была добавлена защита от радиации и аномалий.";
+            preFlightCheckService.resetProtectionAdded();
+        }
+
+        return ResponseEntity.ok(message);
     }
 }

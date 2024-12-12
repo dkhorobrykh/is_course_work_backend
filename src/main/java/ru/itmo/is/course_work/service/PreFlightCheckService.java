@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.FlightSchedule;
+import ru.itmo.is.course_work.model.Planet;
 import ru.itmo.is.course_work.model.ShipStatus;
-import ru.itmo.is.course_work.model.UserData;
 import ru.itmo.is.course_work.repository.FlightScheduleRepository;
 import ru.itmo.is.course_work.repository.ShipStatusRepository;
 
@@ -17,6 +17,9 @@ public class PreFlightCheckService {
     private final ShipStatusService shipStatusService;
     private final FlightScheduleService flightScheduleService;
     private final FlightScheduleRepository flightScheduleRepository;
+    private final ShipStatusRepository shipStatusRepository;
+
+    private boolean protectionAdded = false;
 
     public boolean performPreFlightChecks(Long scheduleId) {
         FlightSchedule schedule = flightScheduleService.getScheduleById(scheduleId);
@@ -34,8 +37,27 @@ public class PreFlightCheckService {
             throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_ENGINE);
         }
 
+        Planet departurePlanet = schedule.getPlanetDeparture();
+        Planet arrivalPlanet = schedule.getPlanetArrival();
+
+        if (!departurePlanet.getGalaxy().equals(arrivalPlanet.getGalaxy())) {
+            ensureProtectionFromAnomaliesAndRadiation(shipStatus);
+            protectionAdded = true;
+        }
+
         return true;
     }
 
+    private void ensureProtectionFromAnomaliesAndRadiation(ShipStatus shipStatus) {
+        shipStatus.setRadiationResistance(ShipStatus.RadiationResistance.RESISTANT);
+        shipStatusRepository.save(shipStatus);
+    }
 
+    public boolean isProtectionAdded() {
+        return protectionAdded;
+    }
+
+    public void resetProtectionAdded() {
+        protectionAdded = false;
+    }
 }
