@@ -1,6 +1,7 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.annotation.Nullable;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,22 +18,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class ShipService {
 
     private final ShipRepository shipRepository;
-    private final ShipStatusRepository shipStatusRepository;
     private final ShipTypeRepository shipTypeRepository;
     private final ServiceClassRepository serviceClassRepository;
-    private final UserDataRepository userDataRepository;
-
-    @Autowired
-    public ShipService(ShipRepository shipRepository, ShipStatusRepository shipStatusRepository, ShipTypeRepository shipTypeRepository, ServiceClassRepository serviceClassRepository, UserDataRepository userDataRepository) {
-        this.shipRepository = shipRepository;
-        this.shipStatusRepository = shipStatusRepository;
-        this.shipTypeRepository = shipTypeRepository;
-        this.serviceClassRepository = serviceClassRepository;
-        this.userDataRepository = userDataRepository;
-    }
 
     @Transactional
     public ShipDto addNewShipWithStatus(ShipDto shipDto) {
@@ -43,8 +35,7 @@ public class ShipService {
         ship.setPhoto(shipDto.getPhoto());
 
         if (shipDto.getShipTypeId() != null) {
-            ship.setShipType(shipTypeRepository.findById(shipDto.getShipTypeId())
-                    .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_TYPE_NOT_FOUND)));
+            ship.setShipType(getShipTypeById(shipDto.getShipTypeId()));
         }
 
         Set<ServiceClass> serviceClasses = shipDto.getServiceClassIds().stream()
@@ -100,5 +91,10 @@ public class ShipService {
         }
 
         return shipRepository.findAll();
+    }
+
+    public ShipType getShipTypeById(Long id) {
+        return shipTypeRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_TYPE_NOT_FOUND));
     }
 }

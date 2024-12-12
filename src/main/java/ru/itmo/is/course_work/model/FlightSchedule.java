@@ -22,7 +22,7 @@ public class FlightSchedule {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @OneToOne(optional = false, orphanRemoval = true)
     @JoinColumn(name = "flight_id", nullable = false)
     private Flight flight;
 

@@ -17,6 +17,7 @@ import java.util.List;
 public class FlightService {
 
     private final FlightRepository flightRepository;
+    private final PlanetService planetService;
 
     public Flight getFlightById(Long id) {
         return flightRepository.findById(id)
@@ -47,5 +48,18 @@ public class FlightService {
         }
 
         return null;
+    }
+
+    public List<Flight> selectAvailableFlights(Long departurePlanetId, Long arrivalPlanetId) {
+        var departure = planetService.getPlanetById(departurePlanetId);
+        var arrival = planetService.getPlanetById(arrivalPlanetId);
+
+        var currentUser = RoleService.getCurrentUser();
+        if (currentUser == null)
+            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+
+        var type = currentUser.getPhysiologicalType();
+
+        return flightRepository.findAllAvailableForUser(departure.getId(), arrival.getId(), type.getAirType().getId(), type.getHabitat().getId(), type.getTemperatureType().getId());
     }
 }

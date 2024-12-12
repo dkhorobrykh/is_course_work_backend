@@ -63,4 +63,8 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles = new LinkedHashSet<>();
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "physiological_type_id", nullable = false)
+    private PhysiologicalType physiologicalType;
+
 }
