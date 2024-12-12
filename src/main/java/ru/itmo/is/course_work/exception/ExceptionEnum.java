@@ -41,6 +41,7 @@ public enum ExceptionEnum {
     AIR_TYPE_NOT_FOUND("Тип воздуха не найден", HttpStatus.NOT_FOUND),
     HABITAT_NOT_FOUND("Тип среды обитания не найден", HttpStatus.NOT_FOUND),
     TEMPERATURE_TYPE_NOT_FOUND("Тип температурных условий не найден", HttpStatus.NOT_FOUND),
+    PLANET_NOT_FOUND("Планета не найдена", HttpStatus.NOT_FOUND),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
