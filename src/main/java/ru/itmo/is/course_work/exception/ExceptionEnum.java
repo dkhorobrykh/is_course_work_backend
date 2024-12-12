@@ -42,6 +42,12 @@ public enum ExceptionEnum {
     HABITAT_NOT_FOUND("Тип среды обитания не найден", HttpStatus.NOT_FOUND),
     TEMPERATURE_TYPE_NOT_FOUND("Тип температурных условий не найден", HttpStatus.NOT_FOUND),
     PLANET_NOT_FOUND("Планета не найдена", HttpStatus.NOT_FOUND),
+    FLIGHT_STATUS_NOT_FOUND("Статус рейса не найден", HttpStatus.NOT_FOUND),
+    CARGO_STATUS_NOT_FOUND("Статус груза не найден", HttpStatus.NOT_FOUND),
+    WRONG_STATUS_SWITCHING("Неверный перевод статуса", HttpStatus.BAD_REQUEST),
+    CARGO_IS_NOT_READY("Груз не готов", HttpStatus.BAD_REQUEST),
+    CARGO_IS_NOT_COMPLETED("Выгрузка груза еще не завершена", HttpStatus.BAD_REQUEST),
+    FLIGHT_SHOULD_BE_LANDED_BEFORE_UNLOADING_CARGO("Рейс должен приземлиться перед выгрузкой груза", HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 

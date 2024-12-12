@@ -25,6 +25,7 @@ public class ShipService {
     private final ShipRepository shipRepository;
     private final ShipTypeRepository shipTypeRepository;
     private final ServiceClassRepository serviceClassRepository;
+    private final ServiceClassService serviceClassService;
 
     @Transactional
     public ShipDto addNewShipWithStatus(ShipDto shipDto) {
@@ -34,13 +35,11 @@ public class ShipService {
         ship.setRegistrationDatetime(shipDto.getRegistrationDatetime());
         ship.setPhoto(shipDto.getPhoto());
 
-        if (shipDto.getShipTypeId() != null) {
+        if (shipDto.getShipTypeId() != null)
             ship.setShipType(getShipTypeById(shipDto.getShipTypeId()));
-        }
 
         Set<ServiceClass> serviceClasses = shipDto.getServiceClassIds().stream()
-                .map(id -> serviceClassRepository.findById(id)
-                        .orElseThrow(() -> new CustomException(ExceptionEnum.SERVICE_CLASS_NOT_FOUND)))
+                .map(serviceClassService::getServiceClassById)
                 .collect(Collectors.toSet());
         ship.setServiceClasses(serviceClasses);
 

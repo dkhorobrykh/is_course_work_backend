@@ -17,6 +17,14 @@ import org.hibernate.validator.constraints.Length;
 @Getter
 @Setter
 public class FlightStatus {
+    public final static String PLANNED = "PLANNED";
+    public final static String APPROVED = "APPROVED";
+    public final static String REGISTRATION = "REGISTRATION";
+    public final static String BOARDING = "BOARDING";
+    public final static String FLIGHT = "FLIGHT";
+    public final static String DISEMBARKATION = "DISEMBARKATION";
+    public final static String COMPLETED = "COMPLETED";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
