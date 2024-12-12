@@ -23,4 +23,12 @@ ORDER BY f.departureDatetime ASC
 """)
     // todo: фильтр по нужным статусам
     List<Flight> findAllAvailableForUser(Long departurePlanetId, Long arrivalPlanetId, Long airTypeId, Long habitatId, Long temperatureTypeId);
+
+    @Query("""
+    SELECT f
+    FROM Flight f
+    JOIN f.flightStatus fs
+    WHERE fs.name = :statusName
+    """)
+    List<Flight> findByFlightStatusName(String statusName);
 }
