@@ -48,6 +48,7 @@ public enum ExceptionEnum {
     CARGO_IS_NOT_READY("Груз не готов", HttpStatus.BAD_REQUEST),
     CARGO_IS_NOT_COMPLETED("Выгрузка груза еще не завершена", HttpStatus.BAD_REQUEST),
     FLIGHT_SHOULD_BE_LANDED_BEFORE_UNLOADING_CARGO("Рейс должен приземлиться перед выгрузкой груза", HttpStatus.BAD_REQUEST),
+    ROLE_NOT_FOUND("Роль не найдена", HttpStatus.NOT_FOUND),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
