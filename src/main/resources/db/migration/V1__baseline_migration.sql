@@ -198,7 +198,6 @@ CREATE TABLE is_course_ship
     number                VARCHAR(50) UNIQUE                      NOT NULL,
     registration_datetime TIMESTAMP WITHOUT TIME ZONE             NOT NULL,
     photo                 VARCHAR(255),
-    service_classes       JSONB DEFAULT '[]'::JSONB               NOT NULL,
     CONSTRAINT pk_is_course_ship PRIMARY KEY (id)
 );
 

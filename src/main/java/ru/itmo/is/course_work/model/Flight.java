@@ -43,6 +43,10 @@ public class Flight {
     @JoinColumn(name = "flight_status_id", nullable = false)
     private FlightStatus flightStatus;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "cargo_status_id", nullable = false)
+    private CargoStatus cargoStatus;
+
     @Column(name = "departure_datetime", nullable = false)
     private Instant departureDatetime;
 
