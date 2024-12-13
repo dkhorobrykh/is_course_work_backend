@@ -46,7 +46,7 @@ public class InsuranceController {
     }
 
     @GetMapping("/flight/{flightId}")
-    @PreAuthorize("@RoleService.hasAccessToFlight(#flightId)")
+    @PreAuthorize("@RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
     @Operation(summary = "Получить все страховки, оформленные на рейсе с [{flightId}]")
     public ResponseEntity<List<InsuranceIssuedDto>> getAllIssuedInsuranceByFlightId(@PathVariable Long flightId) {
         var result = insuranceService.getAllIssuedInsurancesByFlightId(flightId);
@@ -55,7 +55,7 @@ public class InsuranceController {
     }
 
     @GetMapping("/flight/{flightId}/user/{userId}")
-    @PreAuthorize("(@RoleService.hasAdminRole() || @RoleService.userIdEqualsCurrent(#userId)) && @RoleService.hasAccessToFlight(#flightId)")
+    @PreAuthorize("(@RoleService.hasAdminRole() || @RoleService.userIdEqualsCurrent(#userId)) && @RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
     @Operation(summary = "Получить все страховки, оформленные на рейсе с [{flightId}] пользователем с [{userId}]")
     public ResponseEntity<List<InsuranceIssuedDto>> getAllIssuedInsuranceByFlightIdAndUserId(@PathVariable Long flightId, @PathVariable Long userId) {
         var result = insuranceService.getAllIssuedInsurancesByFlightIdAndRecipientId(flightId, userId);

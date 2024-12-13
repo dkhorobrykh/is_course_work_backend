@@ -4,6 +4,7 @@ import jakarta.annotation.Nullable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import ru.itmo.is.course_work.model.Flight;
 import ru.itmo.is.course_work.model.Role;
 import ru.itmo.is.course_work.model.User;
 
@@ -35,8 +36,12 @@ public class RoleService {
         return currentUser.getRoles().stream().anyMatch(role -> role.getName().equals(Role.ADMIN));
     }
 
-    public static boolean hasAccessToFlight(Long flightId) {
-        // TODO
-        return hasAdminRole();
+    public static boolean hasAccessToFlight(Flight flight) {
+        var currentUser = getCurrentUser();
+
+        if (currentUser == null) return false;
+
+        return hasAdminRole()
+                || currentUser.getRoles().stream().anyMatch(role -> role.getFlight().getId().equals(flight.getId()));
     }
 }

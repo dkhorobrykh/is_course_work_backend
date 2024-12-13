@@ -31,8 +31,8 @@ public class FlightService {
     }
 
     public List<Flight> getAllAvailableFlights() {
-        // todo: только с нужным статусом
-        return flightRepository.findAll();
+        var neededStatuses = List.of(FlightStatus.APPROVED, FlightStatus.REGISTRATION);
+        return flightRepository.findAllByFlightStatus_NameIn(neededStatuses);
     }
 
     public Flight findSuitableFlightForCargo(Cargo cargo) {
@@ -66,7 +66,9 @@ public class FlightService {
 
         var type = currentUser.getPhysiologicalType();
 
-        return flightRepository.findAllAvailableForUser(departure.getId(), arrival.getId(), type == null ? null : type.getAirType().getId(), type == null ? null : type.getHabitat().getId(), type == null ? null : type.getTemperatureType().getId());
+        var neededStatusNames = List.of(FlightStatus.APPROVED, FlightStatus.REGISTRATION);
+
+        return flightRepository.findAllAvailableForUser(departure.getId(), arrival.getId(), type == null ? null : type.getAirType().getId(), type == null ? null : type.getHabitat().getId(), type == null ? null : type.getTemperatureType().getId(), neededStatusNames);
     }
 
     public Flight changeStatus(Long flightId, ChangeStatusDto dto) {
