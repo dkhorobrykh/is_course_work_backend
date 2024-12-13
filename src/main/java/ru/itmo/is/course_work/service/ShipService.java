@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 public class ShipService {
 
     private final ShipRepository shipRepository;
+    private final CargoRepository cargoRepository;
     private final ShipTypeRepository shipTypeRepository;
     private final ServiceClassRepository serviceClassRepository;
     private final ServiceClassService serviceClassService;
@@ -96,4 +97,56 @@ public class ShipService {
         return shipTypeRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_TYPE_NOT_FOUND));
     }
+
+    @Transactional
+    public boolean updateShipConditions(Long shipId, double temperature, String atmosphereType, double radiationProtectionLevel) {
+        Ship ship = shipRepository.findById(shipId)
+                .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_NOT_FOUND));
+
+        List<Cargo> cargos = cargoRepository.findByShipId(shipId);
+
+        for (Cargo cargo : cargos) {
+            CargoCondition cargoCondition = cargo.getCargoCondition();
+
+            if (!matchesConditions(temperature, atmosphereType, radiationProtectionLevel, cargoCondition)) {
+                log.warn("Условия не соответствуют требованиям груза {}", cargo.getName());
+                return false;
+            }
+        }
+
+        List<Passenger> passengers = findPassengersByShip(ship);
+
+        for (Passenger passenger : passengers) {
+            PhysiologicalType physiologicalType = passenger.getUser().getPhysiologicalType();
+
+            if (!matchesConditions(temperature, atmosphereType, radiationProtectionLevel, physiologicalType)) {
+                log.warn("Условия не соответствуют требованиям пассажира {}", passenger.getUser().getFirstName());
+                return false;
+            }
+        }
+
+        ship.setTemperature(temperature);
+        ship.setAtmosphereType(atmosphereType);
+        ship.setRadiationProtectionLevel(radiationProtectionLevel);
+        shipRepository.save(ship);
+        log.info("Условия на борту корабля {} успешно обновлены", ship.getName());
+        return true;
+    }
+
+    private boolean matchesConditions(double temperature, String atmosphereType, double radiationProtectionLevel, CargoCondition cargoCondition) {
+        return atmosphereType.equals(cargoCondition.getAirType().getName()) &&
+                temperature >= cargoCondition.getTemperatureType().getMinTemperature() &&
+                temperature <= cargoCondition.getTemperatureType().getMaxTemperature();
+    }
+
+    private boolean matchesConditions(double temperature, String atmosphereType, double radiationProtectionLevel, PhysiologicalType physiologicalType) {
+        return atmosphereType.equals(physiologicalType.getAirType().getName()) &&
+                temperature >= physiologicalType.getTemperatureType().getMinTemperature() &&
+                temperature <= physiologicalType.getTemperatureType().getMaxTemperature();
+    }
+
+    private List<Passenger> findPassengersByShip(Ship ship) {
+        return List.of();
+    }
+
 }
