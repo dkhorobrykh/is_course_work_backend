@@ -49,4 +49,25 @@ public class ShipController {
         List<Ship> ships = shipService.findShipsForPassenger(userData);
         return new ResponseEntity<>(ships, HttpStatus.OK);
     }
+
+    @PatchMapping("/{id}/conditions")
+    @Operation(
+            summary = "Обновление условий на борту корабля."
+    )
+    public ResponseEntity<String> updateShipConditions(
+            @PathVariable Long id,
+            @RequestParam double temperature,
+            @RequestParam String atmosphereType,
+            @RequestParam double radiationProtectionLevel) {
+
+        boolean updated = shipService.updateShipConditions(id, temperature, atmosphereType, radiationProtectionLevel);
+
+        if (updated) {
+            return ResponseEntity.ok("Условия на борту корабля успешно обновлены.");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("Не удалось обновить условия на борту корабля. Проверьте соответствие условий для груза и пассажиров.");
+        }
+    }
+
 }

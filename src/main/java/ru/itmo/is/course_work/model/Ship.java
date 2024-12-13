@@ -64,4 +64,14 @@ public class Ship {
     @JoinColumn(name = "habitat_id", nullable = false)
     private Habitat habitat;
 
+    @Column(name = "temperature", nullable = false)
+    private double temperature;
+
+    @Column(name = "atmosphere_type", nullable = false)
+    private String atmosphereType;
+
+    @Column(name = "radiation_protection_level", nullable = false)
+    private double radiationProtectionLevel;
+
+
 }
