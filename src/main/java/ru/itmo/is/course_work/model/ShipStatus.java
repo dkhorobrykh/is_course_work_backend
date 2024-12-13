@@ -41,7 +41,6 @@ public class ShipStatus {
     @Column(name = "radiation_resistance", nullable = false)
     private RadiationResistance radiationResistance;
 
-
     @Column(name = "last_updated", nullable = false)
     private Instant lastUpdated;
 
