@@ -3,6 +3,10 @@ package ru.itmo.is.course_work.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
@@ -18,6 +22,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @Builder
+@Audited
+@AuditTable("is_course_role_audit")
 public class Role {
     public final static String ADMIN = "ADMIN";
 
@@ -33,10 +39,13 @@ public class Role {
 
     @ManyToOne
     @JoinColumn(name = "flight_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Flight flight;
 
     @ManyToOne
     @JoinColumn(name = "planet_id")
+    @NotAudited
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Planet planet;
 
     @Builder.Default

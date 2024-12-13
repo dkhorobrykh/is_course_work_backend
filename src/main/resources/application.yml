@@ -48,6 +48,13 @@ spring:
       ddl-auto: validate
     open-in-view: false
     show-sql: false
+    properties:
+      org:
+        hibernate:
+          envers:
+            revision_field_name: REVISION_ID
+            revision_type_field_name: REVISION_TYPE
+            audit_table_suffix: _audit
 
 springdoc:
   swagger-ui:
