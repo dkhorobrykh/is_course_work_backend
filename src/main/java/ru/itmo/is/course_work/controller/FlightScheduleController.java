@@ -17,7 +17,7 @@ import java.util.List;
 @RequestMapping("/admin/schedules")
 @RequiredArgsConstructor
 @Tag(
-        name = "Flight Schedule controller",
+        name = "Flight schedule controller",
         description = "Контроллер для взаимодействия с расписанием"
 )
 public class FlightScheduleController {

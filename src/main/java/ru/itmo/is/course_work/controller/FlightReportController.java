@@ -13,7 +13,7 @@ import org.springframework.http.ResponseEntity;
 import java.util.List;
 
 @Tag(
-        name = "Flight Report controller",
+        name = "Flight report controller",
         description = "Контроллер для генерации отчетов о завершенных рейсах"
 )
 @RestController

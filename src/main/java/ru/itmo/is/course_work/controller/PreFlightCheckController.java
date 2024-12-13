@@ -11,7 +11,7 @@ import ru.itmo.is.course_work.service.PreFlightCheckService;
 @RequestMapping("/preflight")
 @RequiredArgsConstructor
 @Tag(
-        name = "PreFlight Check controller",
+        name = "PreFlight check controller",
         description = "Контроллер для анализа и мониторинга грузопотока и пассажиропотока"
 )
 public class PreFlightCheckController {

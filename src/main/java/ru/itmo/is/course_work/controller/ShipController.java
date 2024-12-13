@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/ships")
 @Validated
 @Tag(
-        name = "Ship Controller",
+        name = "Ship controller",
         description = "Контроллер для управления кораблями и поиска доступных кораблей для пассажиров"
 )
 public class ShipController {

@@ -14,7 +14,7 @@ import ru.itmo.is.course_work.service.ShipStatusService;
 @RequestMapping("/ship-status")
 @RequiredArgsConstructor
 @Tag(
-        name = "Ship Status Controller",
+        name = "Ship status controller",
         description = "Контроллер для получения и обновления статусов судов"
 )
 public class ShipStatusController {
@@ -22,7 +22,7 @@ public class ShipStatusController {
 
     @GetMapping("/{shipId}")
     @Operation(
-            summary = "Позволяет получить текущий статус корабля по его идентификатору."
+            summary = "Позволяет получить текущий статус корабля по его shipId."
     )
     public ResponseEntity<ShipStatus> getShipStatus(@PathVariable Long shipId) {
         return ResponseEntity.ok(shipStatusService.getShipStatus(shipId));

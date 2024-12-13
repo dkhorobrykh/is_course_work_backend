@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/flow-analysis")
 @RequiredArgsConstructor
 @Tag(
-        name = "Flight Analysis controller",
+        name = "Flight analysis controller",
         description = "Контроллер для анализа и мониторинга грузопотока и пассажиропотока"
 )
 public class FlowAnalysisController {
