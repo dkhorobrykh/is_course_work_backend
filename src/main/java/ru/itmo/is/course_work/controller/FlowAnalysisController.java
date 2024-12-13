@@ -1,5 +1,7 @@
 package ru.itmo.is.course_work.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,15 +16,25 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/flow-analysis")
 @RequiredArgsConstructor
+@Tag(
+        name = "Flight Analysis controller",
+        description = "Контроллер для анализа и мониторинга грузопотока и пассажиропотока"
+)
 public class FlowAnalysisController {
 
     private final FlowAnalysisService flowAnalysisService;
 
+    @Operation(
+            summary = "Возвращает полный анализ потока для всех рейсов."
+    )
     @GetMapping
     public List<FlightAnalysisDto> getFlowAnalysis() {
         return flowAnalysisService.analyzeFlow();
     }
 
+    @Operation(
+            summary = "Возвращает сводную информацию о каждом рейсе (его название, количество пассажиров и общий вес груза)."
+    )
     @GetMapping("/summary")
     public List<Map<String, Object>> getFlowAnalysisSummary() {
         List<FlightAnalysisDto> analysis = flowAnalysisService.analyzeFlow();
