@@ -38,4 +38,17 @@ public class UserService {
     public User save(User user) {
         return userRepository.saveAndFlush(user);
     }
+
+    public User addBalance(Long userId, Double amount) {
+        if (amount <= 0) {
+            throw new CustomException(ExceptionEnum.INVALID_AMOUNT);
+        }
+
+        var user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
+
+        user.setBalance(user.getBalance() + amount);
+
+        return userRepository.save(user);
+    }
 }
