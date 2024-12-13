@@ -35,6 +35,8 @@ public class ServiceClass {
     @Length(max = 100)
     private String outputName;
 
+    private double cost;
+
     @Override
     public final boolean equals(Object o) {
         if (this == o) return true;

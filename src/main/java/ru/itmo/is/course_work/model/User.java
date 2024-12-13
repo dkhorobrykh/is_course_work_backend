@@ -67,4 +67,7 @@ public class User {
     @JoinColumn(name = "physiological_type_id", nullable = false)
     private PhysiologicalType physiologicalType;
 
+    @Column(name = "balance", nullable = false)
+    private Double balance = 10000.0;
+
 }

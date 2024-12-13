@@ -25,6 +25,7 @@ public class InsuranceService {
     private final PassengerService passengerService;
     private final CargoService cargoService;
     private final FlightService flightService;
+    private final UserService userService;
 
     public InsuranceProgram getInsuranceProgramById(Long id) {
         return insuranceProgramRepository.findById(id)
@@ -59,6 +60,12 @@ public class InsuranceService {
             throw new CustomException(ExceptionEnum.INSURANCE_PROGRAM_IS_NOT_ACTIVE);
 
         var totalCost = calculateTotalCostForInsurance(dto);
+        if (currentUser.getBalance() < totalCost) {
+            throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);
+        }
+
+        currentUser.setBalance(currentUser.getBalance() - totalCost);
+
 
         var newInsurance = InsuranceIssued.builder()
 

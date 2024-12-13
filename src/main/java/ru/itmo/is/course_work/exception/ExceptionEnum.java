@@ -50,6 +50,9 @@ public enum ExceptionEnum {
     CARGO_IS_NOT_COMPLETED("Выгрузка груза еще не завершена", HttpStatus.BAD_REQUEST),
     FLIGHT_SHOULD_BE_LANDED_BEFORE_UNLOADING_CARGO("Рейс должен приземлиться перед выгрузкой груза", HttpStatus.BAD_REQUEST),
     ROLE_NOT_FOUND("Роль не найдена", HttpStatus.NOT_FOUND),
+    INSUFFICIENT_BALANCE("Недостаточно средств на балансе", HttpStatus.BAD_REQUEST),
+    INVALID_AMOUNT("Некорректная сумма пополнения", HttpStatus.BAD_REQUEST),
+
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
