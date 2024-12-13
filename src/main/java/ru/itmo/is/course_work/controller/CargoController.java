@@ -52,7 +52,7 @@ public class CargoController {
     }
 
     @GetMapping("{flightId}")
-    @PreAuthorize("@RoleService.hasAdminRole() || @RoleService.hasAccessToFlight(#flightId)")
+    @PreAuthorize("@RoleService.hasAdminRole() || @RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
     @Operation(summary = "Получить список грузов, относящихся к рейсу [{flightId}]")
     public ResponseEntity<List<CargoDto>> getAllByFlightId(@PathVariable Long flightId) {
         var result = cargoService.getAllByFlightId(flightId);
