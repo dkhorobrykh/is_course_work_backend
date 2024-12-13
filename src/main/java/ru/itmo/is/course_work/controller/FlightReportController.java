@@ -1,5 +1,7 @@
 package ru.itmo.is.course_work.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -10,12 +12,17 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+@Tag(
+        name = "Flight report controller",
+        description = "Контроллер для генерации отчетов о завершенных рейсах"
+)
 @RestController
 public class FlightReportController {
 
     @Autowired
     private FlightReportService flightReportService;
 
+    @Operation(summary = "Сгенерировать отчеты")
     @GetMapping("/flights/report/completed")
     public ResponseEntity<?> getCompletedFlightsReport() {
         List<FlightReportDto> report = flightReportService.generateCompletedFlightsReport();
