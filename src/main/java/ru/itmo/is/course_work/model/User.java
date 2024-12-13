@@ -1,9 +1,13 @@
 package ru.itmo.is.course_work.model;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
+import org.hibernate.envers.AuditTable;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.LocalDate;
@@ -20,6 +24,8 @@ import java.util.Set;
 @Setter
 @Builder
 @Jacksonized
+@Audited
+@AuditTable("is_course_user_audit")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -63,8 +69,10 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "roles_id"))
     private Set<Role> roles = new LinkedHashSet<>();
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "physiological_type_id", nullable = false)
+    @ManyToOne
+    @Nullable
+    @JoinColumn(name = "physiological_type_id")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private PhysiologicalType physiologicalType;
 
     @Column(name = "balance", nullable = false)

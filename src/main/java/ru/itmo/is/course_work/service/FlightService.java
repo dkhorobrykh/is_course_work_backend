@@ -66,7 +66,7 @@ public class FlightService {
 
         var type = currentUser.getPhysiologicalType();
 
-        return flightRepository.findAllAvailableForUser(departure.getId(), arrival.getId(), type.getAirType().getId(), type.getHabitat().getId(), type.getTemperatureType().getId());
+        return flightRepository.findAllAvailableForUser(departure.getId(), arrival.getId(), type == null ? null : type.getAirType().getId(), type == null ? null : type.getHabitat().getId(), type == null ? null : type.getTemperatureType().getId());
     }
 
     public Flight changeStatus(Long flightId, ChangeStatusDto dto) {

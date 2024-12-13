@@ -15,9 +15,9 @@ LEFT JOIN FlightSchedule fs on f.flightSchedule = fs
 
 WHERE fs.planetDeparture.id = :departurePlanetId
     AND fs.planetArrival.id = :arrivalPlanetId
-    AND s.airType.id = :airTypeId
-    AND s.habitat.id = :habitatId
-    AND s.temperatureType.id = :temperatureTypeId
+    AND (:airTypeId IS NULL OR s.airType.id = :airTypeId)
+    AND (:habitatId IS NULL OR s.habitat.id = :habitatId)
+    AND (:temperatureTypeId IS NULL OR s.temperatureType.id = :temperatureTypeId)
 
 ORDER BY f.departureDatetime ASC
 """)
