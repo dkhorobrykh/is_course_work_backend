@@ -25,6 +25,10 @@ public class FlightService {
     private final FlightStatusService flightStatusService;
     private final CargoStatusService cargoStatusService;
 
+    public List<Flight> getAllFlights() {
+        return flightRepository.findAll();
+    }
+
     public Flight getFlightById(Long id) {
         return flightRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.FLIGHT_NOT_FOUND));

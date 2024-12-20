@@ -32,6 +32,22 @@ public class FlightController {
     private final PassengerService passengerService;
     private final PassengerMapper passengerMapper;
 
+    @GetMapping
+    @Operation(summary = "Получить список всех рейсов")
+    public ResponseEntity<List<FlightDto>> getAllFlights() {
+        var result = flightService.getAllFlights();
+
+        return ResponseEntity.ok(flightMapper.toDto(result));
+    }
+
+    @GetMapping("{flightId}")
+    @Operation(summary = "Получить информацию о рейсе [{flightId}]")
+    public ResponseEntity<FlightDto> getFlightById(@PathVariable Long flightId) {
+        var result = flightService.getFlightById(flightId);
+
+        return ResponseEntity.ok(flightMapper.toDto(result));
+    }
+
     @GetMapping("select")
     @Operation(summary = "Подобрать подходящие рейсы в зависимости от характеристик текущего пользователя")
     public ResponseEntity<List<FlightDto>> selectAvailableFlightsForCurrentUser(@RequestParam Long departurePlanetId, @RequestParam Long arrivalPlanetId) {
