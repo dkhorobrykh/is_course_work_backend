@@ -3,10 +3,8 @@ package ru.itmo.is.course_work.model;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import lombok.extern.jackson.Jacksonized;
 import org.hibernate.proxy.HibernateProxy;
 import org.hibernate.validator.constraints.Length;
 
@@ -24,6 +22,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@Jacksonized
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +47,10 @@ public class Flight {
     @JoinColumn(name = "cargo_status_id", nullable = false)
     private CargoStatus cargoStatus;
 
-    @Column(name = "departure_datetime", nullable = false)
+    @Column(name = "departure_datetime")
     private Instant departureDatetime;
 
-    @Column(name = "arrival_datetime", nullable = false)
+    @Column(name = "arrival_datetime")
     private Instant arrivalDatetime;
 
     @ManyToMany(fetch = FetchType.EAGER)

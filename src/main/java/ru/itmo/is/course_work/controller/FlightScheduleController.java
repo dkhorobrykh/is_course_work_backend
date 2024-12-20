@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.is.course_work.model.FlightSchedule;
+import ru.itmo.is.course_work.model.dto.AssignFlightToScheduleDto;
 import ru.itmo.is.course_work.model.dto.FlightScheduleDto;
 import ru.itmo.is.course_work.model.dto.FlightScheduleRequest;
 import ru.itmo.is.course_work.model.mapper.FlightScheduleMapper;
@@ -49,7 +50,7 @@ public class FlightScheduleController {
 
     @PostMapping
     @Operation(
-            summary = "Создает новое расписание полета на основе переданных данных"
+            summary = "Создает новое расписание полета"
     )
     public ResponseEntity<FlightScheduleDto> createFlightSchedule(@RequestBody @Valid FlightScheduleRequest request) {
         var createdSchedule = flightScheduleService.createSchedule(request);
@@ -72,5 +73,14 @@ public class FlightScheduleController {
     public ResponseEntity<?> deleteSchedule(@PathVariable Long id) {
         flightScheduleService.deleteSchedule(id);
         return ResponseEntity.ok(null);
+    }
+
+    @PostMapping("{scheduleId}/assignFlight")
+    @Operation(summary = "Назначить рейс на расписание")
+    public ResponseEntity<List<FlightScheduleDto>> assignFlight(@PathVariable Long scheduleId, @RequestBody @Valid AssignFlightToScheduleDto dto) {
+        flightScheduleService.assignFlight(scheduleId, dto);
+        var result = flightScheduleService.getAllSchedules();
+
+        return ResponseEntity.ok(flightScheduleMapper.toDto(result));
     }
 }

@@ -149,4 +149,9 @@ public class ShipService {
         return List.of();
     }
 
+    public Ship getById(Long id) {
+        return shipRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_NOT_FOUND));
+    }
+
 }
