@@ -6,8 +6,11 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.itmo.is.course_work.exception.CustomException;
+import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.dto.UserDto;
 import ru.itmo.is.course_work.model.mapper.UserMapper;
+import ru.itmo.is.course_work.service.RoleService;
 import ru.itmo.is.course_work.service.UserService;
 
 @RestController
@@ -25,5 +28,25 @@ public class UserController {
         var updatedUser = userService.addBalance(userId, amount);
 
         return ResponseEntity.ok(userMapper.toDto(updatedUser));
+    }
+
+    @GetMapping("/{userId}")
+    @Operation(summary = "Получить пользователя по id")
+    public ResponseEntity<UserDto> getUserById(@PathVariable Long userId) {
+        var user = userService.getById(userId);
+
+        return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    @GetMapping
+    @Operation(summary = "Получить текущего пользователя")
+    public ResponseEntity<UserDto> getCurrentUser() {
+        var currentUser = RoleService.getCurrentUser();
+        if (currentUser == null)
+            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+
+        var user = userService.getById(currentUser.getId());
+
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }

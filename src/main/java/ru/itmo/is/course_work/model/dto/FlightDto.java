@@ -22,4 +22,8 @@ public class FlightDto implements Serializable {
     Instant departureDatetime;
     Instant arrivalDatetime;
     Set<WorkerDto> worker;
+    CargoStatusDto cargoStatus;
+    int totalSeats;
+    int bookedSeats;
+    FlightScheduleDto flightSchedule;
 }
