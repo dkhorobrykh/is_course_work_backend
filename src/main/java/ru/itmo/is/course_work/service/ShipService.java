@@ -198,4 +198,9 @@ public class ShipService {
         return shipRepository.save(ship);
     }
 
+    public Ship getByName(String name) {
+        return shipRepository.findByNameIgnoreCase(name)
+            .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_NOT_FOUND));
+    }
+
 }

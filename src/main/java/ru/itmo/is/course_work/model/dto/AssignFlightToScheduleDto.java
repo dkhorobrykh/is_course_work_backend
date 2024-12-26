@@ -10,5 +10,5 @@ public class AssignFlightToScheduleDto {
     String flightName;
 
     @NotNull
-    Long shipId;
+    String shipName;
 }

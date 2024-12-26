@@ -4,6 +4,8 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import ru.itmo.is.course_work.exception.CustomException;
+import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.CargoStatus;
 import ru.itmo.is.course_work.model.Flight;
 import ru.itmo.is.course_work.model.FlightSchedule;
@@ -36,7 +38,7 @@ public class FlightScheduleService {
 
     public FlightSchedule getScheduleById(Long id) {
         return flightScheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Schedule not found"));
+                .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
     }
 
     @Transactional
@@ -68,9 +70,10 @@ public class FlightScheduleService {
     }
 
     public void assignFlight(Long scheduleId, @Valid AssignFlightToScheduleDto dto) {
+
         var schedule = getScheduleById(scheduleId);
 
-        var ship = shipService.getById(dto.getShipId());
+        var ship = shipService.getByName(dto.getShipName());
 
         var flightStatus = flightStatusService.getFlightStatusByName(FlightStatus.PLANNED);
 

@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import lombok.ToString;
 
 @Entity
 @Table(
@@ -16,6 +17,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class FlightSchedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
