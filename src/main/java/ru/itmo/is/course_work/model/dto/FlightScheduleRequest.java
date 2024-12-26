@@ -8,20 +8,14 @@ import java.time.Instant;
 @Data
 public class FlightScheduleRequest {
     @NotNull
-    private Long flightId;
+    private String planetDeparture;
 
     @NotNull
-    private Long planetDepartureId;
-
-    @NotNull
-    private Long planetArrivalId;
+    private String planetArrival;
 
     @NotNull
     private Instant departureDatetime;
 
     @NotNull
     private Instant arrivalDatetime;
-
-    @NotNull
-    private Long scheduleStatusId;
 }

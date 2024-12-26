@@ -52,7 +52,7 @@ public enum ExceptionEnum {
     ROLE_NOT_FOUND("Роль не найдена", HttpStatus.NOT_FOUND),
     INSUFFICIENT_BALANCE("Недостаточно средств на балансе", HttpStatus.BAD_REQUEST),
     INVALID_AMOUNT("Некорректная сумма пополнения", HttpStatus.BAD_REQUEST),
-
+    SCHEDULE_NOT_FOUND("Расписание не найдено", HttpStatus.NOT_FOUND),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 

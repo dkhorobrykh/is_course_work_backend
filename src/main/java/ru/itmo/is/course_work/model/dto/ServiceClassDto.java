@@ -18,4 +18,5 @@ public class ServiceClassDto implements Serializable {
     @NotEmpty
     @Length(max = 100)
     String outputName;
+    Integer cost;
 }

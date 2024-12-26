@@ -24,4 +24,9 @@ public class ShipDto implements Serializable {
     Instant registrationDatetime;
     String photo;
     Set<Long> serviceClassIds;
+    Set<ServiceClassDto> serviceClasses;
+    AirTypeDto airType;
+    TemperatureTypeDto temperatureType;
+    HabitatDto habitat;
+    Integer passengerCapacity;
 }
