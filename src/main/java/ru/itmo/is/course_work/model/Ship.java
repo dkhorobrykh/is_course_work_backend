@@ -73,5 +73,8 @@ public class Ship {
     @Column(name = "radiation_protection_level", nullable = false)
     private double radiationProtectionLevel;
 
+    @Column(name = "passenger_capacity", nullable = false)
+    private Integer passengerCapacity;
+
 
 }

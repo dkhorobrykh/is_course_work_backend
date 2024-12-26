@@ -11,7 +11,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.itmo.is.course_work.model.Ship;
 import ru.itmo.is.course_work.model.UserData;
+import ru.itmo.is.course_work.model.dto.ShipAddDto;
 import ru.itmo.is.course_work.model.dto.ShipDto;
+import ru.itmo.is.course_work.model.mapper.ShipMapper;
 import ru.itmo.is.course_work.service.ShipService;
 
 import java.util.List;
@@ -26,19 +28,21 @@ import java.util.List;
 public class ShipController {
 
     private final ShipService shipService;
+    private final ShipMapper shipMapper;
 
     @Autowired
-    public ShipController(ShipService shipService) {
+    public ShipController(ShipService shipService, ShipMapper shipMapper) {
         this.shipService = shipService;
+        this.shipMapper = shipMapper;
     }
 
     @PostMapping("/add")
     @Operation(
             summary = "Добавить новый корабль."
     )
-    public ResponseEntity<ShipDto> addNewShip(@RequestBody @Validated ShipDto shipDto) {
-        ShipDto createdShip = shipService.addNewShipWithStatus(shipDto);
-        return new ResponseEntity<>(createdShip, HttpStatus.CREATED);
+    public ResponseEntity<ShipDto> addNewShip(@RequestBody @Validated ShipAddDto shipDto) {
+        Ship createdShip = shipService.addNewShipWithStatus(shipDto);
+        return ResponseEntity.ok(shipMapper.toDto(createdShip));
     }
 
     @PostMapping("/find")
@@ -70,4 +74,19 @@ public class ShipController {
         }
     }
 
+    @GetMapping
+    @Operation(summary = "Получить список всех кораблей")
+    public ResponseEntity<List<ShipDto>> getAllShips() {
+        var result = shipService.getAll();
+
+        return ResponseEntity.ok(shipMapper.toDto(result));
+    }
+
+    @PutMapping("{shipId}")
+    @Operation(summary = "Обновить корабль по [{shipId}]")
+    public ResponseEntity<ShipDto> updateShip(@PathVariable Long shipId, @RequestBody ShipDto shipDto) {
+        var result = shipService.update(shipId, shipDto);
+
+        return ResponseEntity.ok(shipMapper.toDto(result));
+    }
 }

@@ -76,7 +76,7 @@ public class FlightScheduleService {
 
         var cargoStatus = cargoStatusService.getCargoStatusByName(CargoStatus.WAITING_START);
 
-        var totalSeats = ship.getShipType().getPassengerCapacity();
+        var totalSeats = ship.getPassengerCapacity();
 
         var newFlight = Flight.builder()
 

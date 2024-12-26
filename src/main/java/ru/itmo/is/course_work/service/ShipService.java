@@ -1,6 +1,8 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.*;
+import ru.itmo.is.course_work.model.dto.ShipAddDto;
 import ru.itmo.is.course_work.model.dto.ShipDto;
 import ru.itmo.is.course_work.repository.*;
 
@@ -27,22 +30,46 @@ public class ShipService {
     private final ShipTypeRepository shipTypeRepository;
     private final ServiceClassRepository serviceClassRepository;
     private final ServiceClassService serviceClassService;
+    private final HabitatService habitatService;
+    private final TemperatureTypeService temperatureTypeService;
+    private final AirService airService;
+
+    public List<Ship> getAll() {
+        return shipRepository.findAll();
+    }
 
     @Transactional
-    public ShipDto addNewShipWithStatus(ShipDto shipDto) {
+    public Ship addNewShipWithStatus(ShipAddDto shipDto) {
         Ship ship = new Ship();
         ship.setName(shipDto.getName());
         ship.setNumber(shipDto.getNumber());
-        ship.setRegistrationDatetime(shipDto.getRegistrationDatetime());
+        ship.setRegistrationDatetime(Instant.now());
         ship.setPhoto(shipDto.getPhoto());
 
-        if (shipDto.getShipTypeId() != null)
-            ship.setShipType(getShipTypeById(shipDto.getShipTypeId()));
+//        if (shipDto.getShipTypeId() != null)
+//            ship.setShipType(getShipTypeById(shipDto.getShipTypeId()));
 
-        Set<ServiceClass> serviceClasses = shipDto.getServiceClassIds().stream()
-                .map(serviceClassService::getServiceClassById)
-                .collect(Collectors.toSet());
+        Set<ServiceClass> serviceClasses = shipDto.getServiceClasses().stream().map(sc -> {
+            var newServiceClass = ServiceClass.builder()
+
+                .name(sc.getName())
+                .cost(sc.getCost())
+                .outputName(sc.getName())
+
+                .build();
+
+            return serviceClassRepository.saveAndFlush(newServiceClass);
+        }).collect(Collectors.toSet());
+
         ship.setServiceClasses(serviceClasses);
+
+        ship.setHabitat(habitatService.getByName(shipDto.getHabitat().getName()));
+        ship.setTemperatureType(temperatureTypeService.getByName(shipDto.getTemperatureType().getName()));
+        ship.setAirType(airService.getByName(shipDto.getAirType().getName()));
+
+        ship.setPassengerCapacity(shipDto.getPassengerCapacity());
+
+        ship.setAtmosphereType(shipDto.getAirType().getName());
 
         ShipStatus shipStatus = new ShipStatus();
         shipStatus.setShip(ship);
@@ -53,19 +80,7 @@ public class ShipService {
 
         ship.setShipStatus(shipStatus);
 
-        Ship savedShip = shipRepository.save(ship);
-
-        return new ShipDto(
-                savedShip.getId(),
-                savedShip.getName(),
-                savedShip.getShipType() != null ? savedShip.getShipType().getId() : null,
-                savedShip.getNumber(),
-                savedShip.getRegistrationDatetime(),
-                savedShip.getPhoto(),
-                savedShip.getServiceClasses().stream()
-                        .map(ServiceClass::getId)
-                        .collect(Collectors.toSet())
-        );
+        return shipRepository.save(ship);
     }
 
     public List<Ship> findShipsForPassenger(UserData userData) {
@@ -152,6 +167,35 @@ public class ShipService {
     public Ship getById(Long id) {
         return shipRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_NOT_FOUND));
+    }
+
+    public Ship update(Long shipId, ShipDto shipDto) {
+        Ship ship = getById(shipId);
+        ship.setName(shipDto.getName());
+        ship.setNumber(shipDto.getNumber());
+        ship.setPhoto(shipDto.getPhoto());
+
+        var newServiceClasses = new HashSet<ServiceClass>();
+
+        for (var serviceClassDto : shipDto.getServiceClasses()) {
+            if (serviceClassDto.getId() != null) {
+                var serviceClass = serviceClassService.getServiceClassById(serviceClassDto.getId());
+                serviceClass.setName(serviceClassDto.getName());
+                serviceClass.setCost(serviceClassDto.getCost());
+                serviceClass.setOutputName(serviceClassDto.getName());
+                newServiceClasses.add(serviceClassRepository.saveAndFlush(serviceClass));
+            } else {
+                var newServiceClass = ServiceClass.builder()
+                        .name(serviceClassDto.getName())
+                        .cost(serviceClassDto.getCost())
+                        .outputName(serviceClassDto.getName())
+                        .build();
+                newServiceClasses.add(serviceClassRepository.saveAndFlush(newServiceClass));
+            }
+        }
+
+        ship.setServiceClasses(newServiceClasses);
+        return shipRepository.save(ship);
     }
 
 }
