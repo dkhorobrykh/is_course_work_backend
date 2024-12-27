@@ -1,6 +1,7 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.constraints.NotEmpty;
+import java.util.List;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,5 +51,9 @@ public class UserService {
         user.setBalance(user.getBalance() + amount);
 
         return userRepository.save(user);
+    }
+
+    public List<User> getAll() {
+        return userRepository.findAll();
     }
 }

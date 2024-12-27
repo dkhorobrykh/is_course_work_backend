@@ -16,8 +16,8 @@ public class RoleDto implements Serializable {
     @NotEmpty
     @Length(max = 100)
     String name;
-    Long flightId;
-    Long planetId;
     boolean active;
     Instant expirationDatetime;
+    FlightDto flight;
+    PlanetDto planet;
 }

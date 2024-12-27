@@ -75,7 +75,7 @@ public class RoleAssignService {
         var user = userService.getById(userId);
         var role = getRoleById(roleId);
 
-        user.setRoles(user.getRoles().stream().filter(x -> x.getId().equals(role.getId())).collect(Collectors.toSet()));
+        user.setRoles(user.getRoles().stream().filter(x -> !x.getId().equals(role.getId())).collect(Collectors.toSet()));
 
         userService.save(user);
     }
