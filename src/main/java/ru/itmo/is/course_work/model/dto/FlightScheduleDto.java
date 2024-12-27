@@ -11,10 +11,10 @@ import java.time.Instant;
 @Value
 public class FlightScheduleDto implements Serializable {
     Long id;
-    FlightDto flight;
     PlanetDto planetDeparture;
     PlanetDto planetArrival;
     Instant departureDatetime;
     Instant arrivalDatetime;
     ScheduleStatusDto scheduleStatus;
+    FlightDto flight;
 }

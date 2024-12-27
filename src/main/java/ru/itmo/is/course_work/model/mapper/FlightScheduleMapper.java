@@ -11,14 +11,8 @@ import java.util.List;
 public interface FlightScheduleMapper {
     FlightSchedule toEntity(FlightScheduleDto flightScheduleDto);
 
-    @AfterMapping
-    default void linkFlight(@MappingTarget FlightSchedule flightSchedule) {
-        Flight flight = flightSchedule.getFlight();
-        if (flight != null) {
-            flight.setFlightSchedule(flightSchedule);
-        }
-    }
-
+    @Mapping(source = "flight", target = "flight")
+    @Mapping(ignore = true, target = "flight.flightSchedule")
     FlightScheduleDto toDto(FlightSchedule flightSchedule);
     List<FlightScheduleDto> toDto(List<FlightSchedule> flightSchedules);
 

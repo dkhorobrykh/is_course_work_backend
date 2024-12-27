@@ -1,9 +1,9 @@
 package ru.itmo.is.course_work.service;
 
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.CargoStatus;
@@ -37,7 +37,7 @@ public class FlightScheduleService {
     }
 
     public FlightSchedule getScheduleById(Long id) {
-        return flightScheduleRepository.findById(id)
+        return flightScheduleRepository.findByIdEquals(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
     }
 
@@ -69,6 +69,7 @@ public class FlightScheduleService {
         flightScheduleRepository.delete(schedule);
     }
 
+    @Transactional
     public void assignFlight(Long scheduleId, @Valid AssignFlightToScheduleDto dto) {
 
         var schedule = getScheduleById(scheduleId);
@@ -93,6 +94,8 @@ public class FlightScheduleService {
 
                 .build();
 
-        flightRepository.saveAndFlush(newFlight);
+        var savedFlight = flightRepository.saveAndFlush(newFlight);
+
+        schedule.setFlight(savedFlight);
     }
 }
