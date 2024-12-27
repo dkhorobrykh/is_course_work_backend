@@ -53,6 +53,9 @@ public enum ExceptionEnum {
     INSUFFICIENT_BALANCE("Недостаточно средств на балансе", HttpStatus.BAD_REQUEST),
     INVALID_AMOUNT("Некорректная сумма пополнения", HttpStatus.BAD_REQUEST),
     SCHEDULE_NOT_FOUND("Расписание не найдено", HttpStatus.NOT_FOUND),
+    NO_FREE_SEATS("На данном рейсе не осталось свободных мест", HttpStatus.BAD_REQUEST),
+    FLIGHT_SHOULD_BE_APPROVED_BEFORE("Перед взаимодействием с грузом рейс должен быть подтвержден",
+        HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 
