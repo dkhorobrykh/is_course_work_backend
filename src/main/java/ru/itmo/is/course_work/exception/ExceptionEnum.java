@@ -56,6 +56,7 @@ public enum ExceptionEnum {
     NO_FREE_SEATS("На данном рейсе не осталось свободных мест", HttpStatus.BAD_REQUEST),
     FLIGHT_SHOULD_BE_APPROVED_BEFORE("Перед взаимодействием с грузом рейс должен быть подтвержден",
         HttpStatus.BAD_REQUEST),
+    DOCUMENT_EXPIRED("Документ недействителен в дату перелета", HttpStatus.BAD_REQUEST),
 
     SERVER_ERROR("", HttpStatus.INTERNAL_SERVER_ERROR);
 

@@ -35,7 +35,7 @@ public class UserDocService {
         if (currentUser == null)
             throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        var userDocType = getUserDocTypeById(dto.getUserDocTypeId());
+        var userDocType = getUserDocTypeByName(dto.getUserDocTypeName());
 
         var issueDate = dto.getIssueDate();
         var expirationDate = dto.getExpirationDate();
@@ -79,5 +79,9 @@ public class UserDocService {
     public UserDoc getUserDocById(Long id) {
         return userDocRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.USER_DOC_NOT_FOUND));
+    }
+
+    public List<UserDocType> getAllUserDocTypes() {
+        return userDocTypeRepository.findAll();
     }
 }
