@@ -1,6 +1,7 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+import java.time.chrono.ChronoLocalDate;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,6 +40,9 @@ public class PassengerService {
         var serviceClass = serviceClassService.getServiceClassById(dto.getServiceClassId());
 
         double flightCost = serviceClass.getCost();
+
+        if (userDoc.getExpirationDate().isBefore(ChronoLocalDate.from(flight.getFlightSchedule().getDepartureDatetime())))
+            throw new CustomException(ExceptionEnum.DOCUMENT_EXPIRED);
 
         if (currentUser.getBalance() < flightCost) {
             throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Value
 public class UserDocAddDto implements Serializable {
     @NotNull
-    Long userDocTypeId;
+    String userDocTypeName;
     @NotEmpty
     @Length(max = 50)
     String series;

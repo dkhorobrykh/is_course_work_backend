@@ -144,6 +144,7 @@ public class AuthService {
                 .surname(dto.getSurname())
                 .dateOfBirth(dateOfBirth)
                 .email(email)
+                .balance(10000.0)
 
                 .build();
 

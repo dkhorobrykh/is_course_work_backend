@@ -15,6 +15,7 @@ public interface CargoMapper {
     Cargo toEntity(CargoDto cargoDto);
 
     @InheritInverseConfiguration(name = "toEntity")
+    @Mapping(ignore = true, target = "flight.flightSchedule.flight")
     CargoDto toDto(Cargo cargo);
 
     List<CargoDto> toDto(List<Cargo> cargo);
