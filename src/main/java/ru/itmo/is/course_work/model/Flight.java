@@ -35,7 +35,7 @@ public class Flight {
     @Length(max = 100)
     private String name;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "ship_id", nullable = false)
     private Ship ship;
 
@@ -65,7 +65,8 @@ public class Flight {
     @Column(name = "booked_seats", nullable = false)
     private int bookedSeats;
 
-    @OneToOne(mappedBy = "flight", orphanRemoval = true)
+    @OneToOne(orphanRemoval = true)
+    @JoinColumn(name = "flight_schedule_id")
     private FlightSchedule flightSchedule;
 
     @Override

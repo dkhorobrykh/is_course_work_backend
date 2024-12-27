@@ -1,5 +1,8 @@
 package ru.itmo.is.course_work.repository;
 
+import jakarta.persistence.Entity;
+import org.springframework.data.jpa.repository.EntityGraph;
+import org.springframework.data.jpa.repository.EntityGraph.EntityGraphType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import ru.itmo.is.course_work.model.Flight;
@@ -41,4 +44,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
             WHERE fs.name IN :neededStatusNames
             """)
     List<Flight> findAllByFlightStatus_NameIn(List<String> neededStatusNames);
+
+    @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {"ship", "flightSchedule"})
+    List<Flight> findAll();
 }
