@@ -1,5 +1,6 @@
 package ru.itmo.is.course_work.service;
 
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,5 +19,9 @@ public class ServiceClassService {
     public ServiceClass getServiceClassById(Long id) {
         return serviceClassRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SERVICE_CLASS_NOT_FOUND));
+    }
+
+    public List<ServiceClass> getServiceClassesByFlightId(Long flightId) {
+        return serviceClassRepository.findAllByFlight_Id(flightId);
     }
 }

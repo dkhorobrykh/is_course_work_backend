@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.Passenger;
@@ -27,6 +28,7 @@ public class PassengerService {
                 .orElseThrow(() -> new CustomException(ExceptionEnum.PASSENGER_NOT_FOUND));
     }
 
+    @Transactional
     public Passenger bookFlight(@Valid BookingFlightDto dto) {
         var currentUser = RoleService.getCurrentUser();
         if (currentUser == null)
@@ -41,6 +43,11 @@ public class PassengerService {
         if (currentUser.getBalance() < flightCost) {
             throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);
         }
+
+        if (flight.getBookedSeats() >= flight.getTotalSeats())
+            throw new CustomException(ExceptionEnum.NO_FREE_SEATS);
+
+        flight.setBookedSeats(flight.getBookedSeats() + 1);
 
         var newPassenger = Passenger.builder()
                 .userDoc(userDoc)
