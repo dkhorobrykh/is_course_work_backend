@@ -41,6 +41,11 @@ public class FlightScheduleService {
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
     }
 
+    public FlightSchedule getByFlightId(Long id) {
+        return flightScheduleRepository.findByFlightId(id)
+            .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
+    }
+
     @Transactional
     public FlightSchedule createSchedule(FlightScheduleRequest request) {
         FlightSchedule schedule = new FlightSchedule();

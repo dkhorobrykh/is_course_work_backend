@@ -24,7 +24,7 @@ public class FlightSchedule {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToOne
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
