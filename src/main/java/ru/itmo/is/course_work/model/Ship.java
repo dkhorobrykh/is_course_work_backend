@@ -27,8 +27,8 @@ public class Ship {
     @Length(max = 100)
     private String name;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "ship_type_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "ship_type_id")
     private ShipType shipType;
 
     @Column(name = "number", nullable = false)
@@ -75,6 +75,5 @@ public class Ship {
 
     @Column(name = "passenger_capacity", nullable = false)
     private Integer passengerCapacity;
-
 
 }
