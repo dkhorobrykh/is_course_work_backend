@@ -127,7 +127,6 @@ public class CargoService {
 
         for (var cargo : freeCargos) {
             var flight = flightService.findSuitableFlightForCargo(cargo);
-
             if (flight != null) {
                 cargo.setFlight(flight);
                 log.info("Груз с номером [{}] и id [{}] назначен на рейс с номером [{}] и id [{}]", cargo.getName(), cargo.getId(), flight.getName(), flight.getId());

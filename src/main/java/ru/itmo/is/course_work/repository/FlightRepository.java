@@ -50,6 +50,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
         
         WHERE fs.name IN :neededStatusNames
         """)
+    @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {"ship"})
     List<Flight> findAllByFlightStatus_NameIn(List<String> neededStatusNames);
 
     @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {

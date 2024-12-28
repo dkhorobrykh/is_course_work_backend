@@ -65,7 +65,7 @@ public class Flight {
     @Column(name = "booked_seats", nullable = false)
     private int bookedSeats;
 
-    @OneToOne(orphanRemoval = true)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "flight_schedule_id")
     private FlightSchedule flightSchedule;
 
