@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.itmo.is.course_work.model.InsuranceIssued;
 import ru.itmo.is.course_work.model.dto.InsuranceIssueRequestDto;
 import ru.itmo.is.course_work.model.dto.InsuranceIssuedDto;
+import ru.itmo.is.course_work.model.dto.InsuranceProgramAddDto;
+import ru.itmo.is.course_work.model.dto.InsuranceProgramDto;
 import ru.itmo.is.course_work.model.mapper.InsuranceIssuedMapper;
+import ru.itmo.is.course_work.model.mapper.InsuranceProgramMapper;
 import ru.itmo.is.course_work.service.InsuranceService;
 
 import java.util.List;
@@ -26,6 +29,7 @@ public class InsuranceController {
 
     private final InsuranceService insuranceService;
     private final InsuranceIssuedMapper insuranceIssuedMapper;
+    private final InsuranceProgramMapper insuranceProgramMapper;
 
     @GetMapping
     @PreAuthorize("@RoleService.hasAdminRole()")
@@ -69,5 +73,30 @@ public class InsuranceController {
         var result = insuranceService.issueNewInsurance(dto);
 
         return ResponseEntity.ok(insuranceIssuedMapper.toDto(result));
+    }
+
+    @GetMapping("programs/{flightId}")
+    @Operation(summary = "Получить список доступных программ страхования для конкретного рейса")
+    public ResponseEntity<List<InsuranceProgramDto>> getAvailableInsuranceProgramsForFlight(@PathVariable Long flightId) {
+        var result = insuranceService.getAllAvailableInsuranceProgramsForFlight(flightId);
+
+        return ResponseEntity.ok(insuranceProgramMapper.toDto(result));
+    }
+
+    @GetMapping("programs")
+    @Operation(summary = "Получить список всех программ страхования")
+    public ResponseEntity<List<InsuranceProgramDto>> getAllInsurancePrograms() {
+        var result = insuranceService.getAllInsurancePrograms();
+
+        return ResponseEntity.ok(insuranceProgramMapper.toDto(result));
+    }
+
+    @PostMapping("programs")
+    @PreAuthorize("@RoleService.hasAdminRole()")
+    @Operation(summary = "Добавить новую программу страхования")
+    public ResponseEntity<InsuranceProgramDto> addNewInsuranceProgram(@Valid @RequestBody InsuranceProgramAddDto dto) {
+        var result = insuranceService.addNewInsuranceProgram(dto);
+
+        return ResponseEntity.ok(insuranceProgramMapper.toDto(result));
     }
 }

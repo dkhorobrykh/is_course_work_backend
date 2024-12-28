@@ -1,7 +1,10 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.chrono.ChronoLocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -24,6 +27,14 @@ public class PassengerService {
     private final ServiceClassService serviceClassService;
     private final UserRepository userRepository;
 
+    public List<Passenger> getAllBooksByCurrentUser() {
+        var currentUser = RoleService.getCurrentUser();
+        if (currentUser == null)
+            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+
+        return passengerRepository.findAllByUser_Id(currentUser.getId());
+    }
+
     public Passenger getPassengerById(Long id) {
         return passengerRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.PASSENGER_NOT_FOUND));
@@ -41,8 +52,14 @@ public class PassengerService {
 
         double flightCost = serviceClass.getCost();
 
-        if (userDoc.getExpirationDate().isBefore(ChronoLocalDate.from(flight.getFlightSchedule().getDepartureDatetime())))
+        ZoneId zoneId = ZoneId.systemDefault();
+        LocalDate departureDate = flight.getFlightSchedule().getDepartureDatetime()
+            .atZone(zoneId)
+            .toLocalDate();
+
+        if (userDoc.getExpirationDate().isBefore(departureDate)) {
             throw new CustomException(ExceptionEnum.DOCUMENT_EXPIRED);
+        }
 
         if (currentUser.getBalance() < flightCost) {
             throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);

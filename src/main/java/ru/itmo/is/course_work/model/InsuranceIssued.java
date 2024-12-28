@@ -21,11 +21,11 @@ public class InsuranceIssued {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "passenger_id")
     private Passenger passenger;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cargo_id")
     private Cargo cargo;
 

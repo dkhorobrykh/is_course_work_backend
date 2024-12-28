@@ -20,6 +20,9 @@ public class InsuranceProgram {
     @Column(name = "id", nullable = false)
     private Long id;
 
+    @Column(name = "name", nullable = false)
+    private String name;
+
     @Column(name = "rank", nullable = false)
     private Integer rank;
 
