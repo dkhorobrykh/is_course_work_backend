@@ -10,6 +10,10 @@ import ru.itmo.is.course_work.model.Passenger;
 import java.util.List;
 
 public interface PassengerRepository extends JpaRepository<Passenger, Long> {
+    @Query("""
+SELECT distinct p
+FROM Passenger p
+WHERE p.flight.id = :flightId""")
     List<Passenger> findAllByFlight_Id(Long flightId);
 
     @Query("""
@@ -18,5 +22,9 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
         WHERE p.id = :id""")
     Optional<Passenger> findById(Long id);
 
+    @Query("""
+        SELECT distinct p
+        FROM Passenger p
+        WHERE p.user.id = :userId""")
     List<Passenger> findAllByUser_Id(Long userId);
 }

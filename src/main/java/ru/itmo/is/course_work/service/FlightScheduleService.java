@@ -41,10 +41,10 @@ public class FlightScheduleService {
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
     }
 
-    public FlightSchedule getByFlightId(Long id) {
-        return flightScheduleRepository.findByFlightId(id)
-            .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
-    }
+//    public FlightSchedule getByFlightId(Long id) {
+//        return flightScheduleRepository.findByFlightId(id)
+//            .orElseThrow(() -> new CustomException(ExceptionEnum.SCHEDULE_NOT_FOUND));
+//    }
 
     @Transactional
     public FlightSchedule createSchedule(FlightScheduleRequest request) {
@@ -101,6 +101,13 @@ public class FlightScheduleService {
 
         var savedFlight = flightRepository.saveAndFlush(newFlight);
 
-        schedule.setFlight(savedFlight);
+//        schedule.setFlight(savedFlight);
+//
+//        flightScheduleRepository.saveAndFlush(schedule);
+    }
+
+    public Flight getFlightByScheduleId(Long scheduleId){
+        return flightScheduleRepository.findFlightByScheduleId(scheduleId)
+            .orElseThrow(() -> new CustomException(ExceptionEnum.FLIGHT_NOT_FOUND));
     }
 }

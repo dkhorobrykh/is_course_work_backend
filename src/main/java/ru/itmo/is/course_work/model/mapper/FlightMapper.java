@@ -26,10 +26,10 @@ public abstract class FlightMapper {
 
 //    @Mapping(expression = "java(flightScheduleService.getByFlightId(flight.getId()))", target =
 //        "flightSchedule")
-    @Mapping(expression = "java(planetMapper.toDto(flightScheduleService.getByFlightId(flightSchedule.getFlight()" +
-        ".getId()).getPlanetDeparture()))", target = "flightSchedule.planetDeparture")
-    @Mapping(expression = "java(planetMapper.toDto(flightScheduleService.getByFlightId(flightSchedule.getFlight()" +
-        ".getId()).getPlanetArrival()))", target = "flightSchedule.planetArrival")
+//    @Mapping(expression = "java(planetMapper.toDto(flightScheduleService.getByFlightId(flightSchedule.getFlight()" +
+//        ".getId()).getPlanetDeparture()))", target = "flightSchedule.planetDeparture")
+//    @Mapping(expression = "java(planetMapper.toDto(flightScheduleService.getByFlightId(flightSchedule.getFlight()" +
+//        ".getId()).getPlanetArrival()))", target = "flightSchedule.planetArrival")
     @Mapping(ignore = true, target = "flightSchedule.flight")
     public abstract FlightDto toDto(Flight flight);
 
