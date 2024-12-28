@@ -81,10 +81,6 @@ public class FlightScheduleController {
         flightScheduleService.assignFlight(scheduleId, dto);
         var result = flightScheduleService.getAllSchedules();
 
-        for (var s : result) {
-            System.out.println(s.getFlight());
-        }
-
         return ResponseEntity.ok(flightScheduleMapper.toDto(result));
     }
 }

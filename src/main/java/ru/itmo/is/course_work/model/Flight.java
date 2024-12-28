@@ -35,8 +35,8 @@ public class Flight {
     @Length(max = 100)
     private String name;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "ship_id", nullable = false)
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ship_id")
     private Ship ship;
 
     @ManyToOne(optional = false)

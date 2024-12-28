@@ -1,6 +1,7 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -125,11 +126,15 @@ public class FlightService {
 
                 if (!flight.getCargoStatus().getName().equals(CargoStatus.READY))
                     throw new CustomException(ExceptionEnum.CARGO_IS_NOT_READY);
+
+                flight.setDepartureDatetime(Instant.now());
             }
 
             case FlightStatus.DISEMBARKATION -> {
                 if (!oldStatus.getName().equals(FlightStatus.FLIGHT))
                     throw new CustomException(ExceptionEnum.WRONG_STATUS_SWITCHING);
+
+                flight.setArrivalDatetime(Instant.now());
             }
 
             case FlightStatus.COMPLETED -> {

@@ -23,7 +23,8 @@ public class PreFlightCheckService {
 
     public boolean performPreFlightChecks(Long scheduleId) {
         FlightSchedule schedule = flightScheduleService.getScheduleById(scheduleId);
-        ShipStatus shipStatus = shipStatusService.getShipStatus(schedule.getFlight().getShip().getId());
+        var flight = flightScheduleService.getFlightByScheduleId(scheduleId);
+        ShipStatus shipStatus = shipStatusService.getShipStatus(flight.getShip().getId());
 
         if (shipStatus.getFuelStatus() == ShipStatus.FuelStatus.CRITICAL) {
             throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_FUEL);

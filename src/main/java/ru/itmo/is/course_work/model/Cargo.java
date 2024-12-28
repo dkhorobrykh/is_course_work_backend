@@ -2,6 +2,8 @@ package ru.itmo.is.course_work.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
@@ -37,10 +39,6 @@ public class Cargo {
     private Integer weight;
 
     @ManyToOne
-    @JoinColumn(name = "insurance_program_id")
-    private InsuranceProgram insuranceProgram;
-
-    @ManyToOne
     @JoinColumn(name = "flight_id")
     private Flight flight;
 
@@ -51,5 +49,9 @@ public class Cargo {
     @ManyToOne(optional = false)
     @JoinColumn(name = "cargo_condition_id", nullable = false)
     private CargoCondition cargoCondition;
+
+    @OneToMany(mappedBy = "cargo", orphanRemoval = true, fetch = FetchType.EAGER)
+    @OrderBy("id desc")
+    private List<InsuranceIssued> insuranceIssueds = new ArrayList<>();
 
 }

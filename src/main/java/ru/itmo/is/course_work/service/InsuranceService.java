@@ -9,6 +9,7 @@ import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.InsuranceIssued;
 import ru.itmo.is.course_work.model.InsuranceProgram;
 import ru.itmo.is.course_work.model.dto.InsuranceIssueRequestDto;
+import ru.itmo.is.course_work.model.dto.InsuranceProgramAddDto;
 import ru.itmo.is.course_work.repository.InsuranceIssuedRepository;
 import ru.itmo.is.course_work.repository.InsuranceProgramRepository;
 
@@ -53,7 +54,7 @@ public class InsuranceService {
 
         var insuranceProgram = getInsuranceProgramById(dto.getInsuranceProgramId());
 
-        if (!programIsNotActiveAtDatetime(insuranceProgram, flight.getDepartureDatetime()) || !programIsNotActiveAtDatetime(insuranceProgram, flight.getArrivalDatetime()))
+        if (!programIsNotActiveAtDatetime(insuranceProgram, flight.getFlightSchedule().getDepartureDatetime()) || !programIsNotActiveAtDatetime(insuranceProgram, flight.getFlightSchedule().getArrivalDatetime()))
             throw new CustomException(ExceptionEnum.WRONG_INSURANCE_PROGRAM_IS_NOT_ACTIVE_AT_FLIGHT_DATE);
 
         if (!insuranceProgram.isActive())
@@ -65,7 +66,6 @@ public class InsuranceService {
         }
 
         currentUser.setBalance(currentUser.getBalance() - totalCost);
-
 
         var newInsurance = InsuranceIssued.builder()
 
@@ -84,7 +84,7 @@ public class InsuranceService {
     public Integer calculateTotalCostForInsurance(@Valid InsuranceIssueRequestDto dto) {
         var insuranceProgram = getInsuranceProgramById(dto.getInsuranceProgramId());
 
-        return (int) Math.ceil(insuranceProgram.getMinCost() * 1.5);
+        return insuranceProgram.getMinCost();
     }
 
     public static boolean programIsNotActiveAtDatetime(InsuranceProgram insuranceProgram, Instant timestamp) {
@@ -115,5 +115,54 @@ public class InsuranceService {
 
     public List<InsuranceIssued> getAllIssuedInsurances() {
         return insuranceIssuedRepository.findAll();
+    }
+
+    public List<InsuranceProgram> getAllAvailableInsuranceProgramsForFlight(Long flightId) {
+        var flight = flightService.getFlightById(flightId);
+
+        return insuranceProgramRepository.findAvailableForFlight(flight.getFlightSchedule().getDepartureDatetime(),
+            flight.getFlightSchedule().getArrivalDatetime());
+    }
+
+    public List<InsuranceProgram> getAllInsurancePrograms() {
+        return insuranceProgramRepository.findAll();
+    }
+
+    public InsuranceProgram addNewInsuranceProgram(InsuranceProgramAddDto dto) {
+        var name = dto.getName();
+
+        var rank = dto.getRank();
+        if (rank < 0)
+            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
+
+        var minCost = dto.getMinCost();
+        if (minCost <= 0)
+            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
+
+        var refundAmount = dto.getRefundAmount();
+        if (refundAmount <= 0)
+            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
+
+        var startDatetime = dto.getStartDatetime();
+
+        var endDatetime = dto.getEndDatetime();
+
+        if (startDatetime.isAfter(endDatetime))
+            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
+
+        var newProgram = InsuranceProgram.builder()
+
+            .name(name)
+            .rank(rank)
+            .minCost(minCost)
+            .refundAmount(refundAmount)
+            .active(true)
+            .startDatetime(startDatetime)
+            .endDatetime(endDatetime)
+
+            .build();
+
+        return insuranceProgramRepository.saveAndFlush(newProgram);
+
     }
 }
