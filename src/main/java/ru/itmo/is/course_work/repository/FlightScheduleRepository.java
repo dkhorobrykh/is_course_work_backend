@@ -16,8 +16,7 @@ public interface FlightScheduleRepository extends JpaRepository<FlightSchedule, 
         WHERE fs.id = :id""")
     Optional<FlightSchedule> findByIdEquals(Long id);
 
-    @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {"planetDeparture", "planetArrival", "flight" +
-        ".ship"})
+    @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {"planetDeparture", "planetArrival"})
     List<FlightSchedule> findAll();
 
 //    @Query("""

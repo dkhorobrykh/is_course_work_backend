@@ -107,7 +107,9 @@ public class FlightScheduleService {
     }
 
     public Flight getFlightByScheduleId(Long scheduleId){
+        if (scheduleId == null)
+            return null;
         return flightScheduleRepository.findFlightByScheduleId(scheduleId)
-            .orElseThrow(() -> new CustomException(ExceptionEnum.FLIGHT_NOT_FOUND));
+            .orElse(null);
     }
 }

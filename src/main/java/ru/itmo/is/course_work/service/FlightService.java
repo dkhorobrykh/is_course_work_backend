@@ -66,13 +66,14 @@ public class FlightService {
         for (var flight: getAllAvailableFlights()) {
             var ship = flight.getShip();
 
-            if (!ship.getTemperatureType().getId().equals(conditions.getTemperatureType().getId()))
+            if (conditions.getTemperatureType() != null &&
+                !ship.getTemperatureType().getId().equals(conditions.getTemperatureType().getId()))
                 continue;
 
-            if (!ship.getHabitat().getId().equals(conditions.getHabitat().getId()))
+            if (conditions.getHabitat() != null && !ship.getHabitat().getId().equals(conditions.getHabitat().getId()))
                 continue;
 
-            if (!ship.getAirType().getId().equals(conditions.getAirType().getId()))
+            if (conditions.getAirType() != null && !ship.getAirType().getId().equals(conditions.getAirType().getId()))
                 continue;
 
             return flight;

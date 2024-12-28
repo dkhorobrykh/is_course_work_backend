@@ -24,20 +24,12 @@ public class FlightSchedule {
     @Column(name = "id", nullable = false)
     private Long id;
 
-//    @OneToOne
-//    @JoinColumn(name = "flight_id")
-//    private Flight flight;
-
-//    @OneToOne(orphanRemoval = true)
-//    @JoinColumn(name = "flight_id")
-//    private Flight flight;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "planet_departure_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "planet_departure_id")
     private Planet planetDeparture;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "planet_arrival_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "planet_arrival_id")
     private Planet planetArrival;
 
     @Column(name = "departure_datetime", nullable = false)
@@ -46,7 +38,7 @@ public class FlightSchedule {
     @Column(name = "arrival_datetime", nullable = false)
     private Instant arrivalDatetime;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
-    @JoinColumn(name = "schedule_status_id", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "schedule_status_id")
     private ScheduleStatus scheduleStatus;
 }
