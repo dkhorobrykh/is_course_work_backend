@@ -2,6 +2,8 @@ package ru.itmo.is.course_work.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.RestController;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +23,15 @@ public class UserController {
 
     private final UserService userService;
     private final UserMapper userMapper;
+
+    @GetMapping("all")
+    @PreAuthorize("@RoleService.hasAdminRole()")
+    @Operation(summary = "Получить список всех пользователей")
+    public ResponseEntity<List<UserDto>> getAllUsers() {
+        var users = userService.getAll();
+
+        return ResponseEntity.ok(userMapper.toDto(users));
+    }
 
     @PostMapping("/{userId}/balance")
     @Operation(summary = "Пополнить баланс пользователя")
