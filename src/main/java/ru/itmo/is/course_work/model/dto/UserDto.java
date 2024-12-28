@@ -31,4 +31,5 @@ public class UserDto implements Serializable {
     @NotEmpty
     String email;
     Set<RoleDto> roles;
+    Double balance;
 }

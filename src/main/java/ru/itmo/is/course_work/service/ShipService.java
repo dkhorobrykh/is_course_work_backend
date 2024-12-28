@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.*;
+import ru.itmo.is.course_work.model.ShipStatus.RadiationResistance;
 import ru.itmo.is.course_work.model.dto.ShipAddDto;
 import ru.itmo.is.course_work.model.dto.ShipDto;
 import ru.itmo.is.course_work.repository.*;
@@ -33,6 +34,7 @@ public class ShipService {
     private final HabitatService habitatService;
     private final TemperatureTypeService temperatureTypeService;
     private final AirService airService;
+    private final ShipStatusRepository shipStatusRepository;
 
     public List<Ship> getAll() {
         return shipRepository.findAll();
@@ -76,9 +78,10 @@ public class ShipService {
         shipStatus.setFuelLevel(100.0);
         shipStatus.setFuelStatus(ShipStatus.FuelStatus.FULL);
         shipStatus.setEngineStatus(ShipStatus.EngineStatus.OK);
+        shipStatus.setRadiationResistance(RadiationResistance.NON_RESISTANT);
         shipStatus.setLastUpdated(Instant.now());
 
-        ship.setShipStatus(shipStatus);
+        ship.setShipStatus(shipStatusRepository.save(shipStatus));
 
         return shipRepository.save(ship);
     }

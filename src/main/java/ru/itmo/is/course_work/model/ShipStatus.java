@@ -21,9 +21,9 @@ public class ShipStatus {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @OneToOne(optional = false, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore
-    @JoinColumn(name = "ship_id", nullable = false)
+    @JoinColumn(name = "ship_id")
     private Ship ship;
 
     @Column(name = "fuel_level", nullable = false)
