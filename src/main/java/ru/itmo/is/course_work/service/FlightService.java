@@ -47,7 +47,7 @@ public class FlightService {
     }
 
     public List<Flight> getAllFlights() {
-        return flightRepository.findAll();
+        return flightRepository.findAllByOrderById();
     }
 
     public Flight getFlightById(Long id) {

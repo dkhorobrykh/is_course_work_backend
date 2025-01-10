@@ -33,7 +33,7 @@ public class FlightScheduleService {
     private final CargoStatusService cargoStatusService;
 
     public List<FlightSchedule> getAllSchedules() {
-        return flightScheduleRepository.findAll();
+        return flightScheduleRepository.findAllByOrderById();
     }
 
     public FlightSchedule getScheduleById(Long id) {

@@ -38,7 +38,7 @@ public class CargoService {
         if (currentUser == null)
             throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        return cargoRepository.findAllBySender_Id(currentUser.getId());
+        return cargoRepository.findAllBySender_IdOrderById(currentUser.getId());
     }
 
     public List<Cargo> getAllWhereCurrentUserIsRecipient() {
@@ -46,15 +46,15 @@ public class CargoService {
         if (currentUser == null)
             throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        return cargoRepository.findAllByRecipient_Id(currentUser.getId());
+        return cargoRepository.findAllByRecipient_IdOrderById(currentUser.getId());
     }
 
     public List<Cargo> getAllByFlightId(Long flightId) {
-        return cargoRepository.findAllByFlight_Id(flightId);
+        return cargoRepository.findAllByFlight_IdOrderById(flightId);
     }
 
     public List<Cargo> getAllCargo() {
-        return cargoRepository.findAll();
+        return cargoRepository.findAllByOrderById();
     }
 
     public Cargo addCargo(@Valid CargoAddDto dto) {
@@ -123,7 +123,7 @@ public class CargoService {
     public void assignCargoToFlightTask() {
         log.debug("Начало назначения грузов на рейсы");
 
-        var freeCargos = cargoRepository.findAllByFlightIsNull();
+        var freeCargos = cargoRepository.findAllByFlightIsNullOrderById();
 
         for (var cargo : freeCargos) {
             var flight = flightService.findSuitableFlightForCargo(cargo);

@@ -17,7 +17,7 @@ public class HabitatService {
     private final HabitatRepository habitatRepository;
 
     public List<Habitat> getAllHabitats() {
-        return habitatRepository.findAll();
+        return habitatRepository.findAllByOrderById();
     }
 
     public Habitat getByName(String name) {

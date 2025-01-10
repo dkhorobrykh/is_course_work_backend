@@ -22,10 +22,10 @@ public class FlowAnalysisService {
     private final FlightRepository flightRepository;
 
     public List<FlightAnalysisDto> analyzeFlow() {
-        List<Flight> flights = flightRepository.findAll();
+        List<Flight> flights = flightRepository.findAllByOrderById();
         return flights.stream().map(flight -> {
             List<Passenger> passengers = passengerRepository.findAllByFlight_Id(flight.getId());
-            List<Cargo> cargos = cargoRepository.findAllByFlight_Id(flight.getId());
+            List<Cargo> cargos = cargoRepository.findAllByFlight_IdOrderById(flight.getId());
             return new FlightAnalysisDto(flight, passengers, cargos);
         }).collect(Collectors.toList());
     }

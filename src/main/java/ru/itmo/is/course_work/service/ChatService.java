@@ -31,7 +31,7 @@ public class ChatService {
         if (currentUser == null)
             throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        return chatRepository.findAllByUserFirst_IdOrUserSecond_Id(currentUser.getId(), currentUser.getId());
+        return chatRepository.findAllByUserFirst_IdOrUserSecond_IdOrderById(currentUser.getId(), currentUser.getId());
     }
 
     public Chat sendMessage(Long chatId, @Valid NewMessageDto dto) {
@@ -87,10 +87,10 @@ public class ChatService {
     }
 
     public Optional<Chat> findChatByUserIds(Long firstUserId, Long secondUserId) {
-        var res = chatRepository.findByUserFirst_IdAndUserSecond_Id(firstUserId, secondUserId);
+        var res = chatRepository.findByUserFirst_IdAndUserSecond_IdOrderById(firstUserId, secondUserId);
 
         if (res.isEmpty())
-            res = chatRepository.findByUserFirst_IdAndUserSecond_Id(secondUserId, firstUserId);
+            res = chatRepository.findByUserFirst_IdAndUserSecond_IdOrderById(secondUserId, firstUserId);
 
         return res;
     }

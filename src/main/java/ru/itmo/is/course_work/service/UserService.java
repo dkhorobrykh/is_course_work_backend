@@ -54,6 +54,6 @@ public class UserService {
     }
 
     public List<User> getAll() {
-        return userRepository.findAll();
+        return userRepository.findAllByOrderById();
     }
 }

@@ -26,7 +26,7 @@ public class RoleAssignService {
     private final UserService userService;
 
     public List<Role> getAllRoles() {
-        return roleRepository.findAll();
+        return roleRepository.findAllByOrderById();
     }
 
     public Role getRoleById(Long roleId) {

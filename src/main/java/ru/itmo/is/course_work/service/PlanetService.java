@@ -28,6 +28,6 @@ public class PlanetService {
     }
 
     public List<Planet> getAll() {
-        return planetRepository.findAll();
+        return planetRepository.findAllByOrderById();
     }
 }
