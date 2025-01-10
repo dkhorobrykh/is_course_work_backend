@@ -7,7 +7,9 @@ import ru.itmo.is.course_work.model.Ship;
 import java.util.List;
 
 public interface ShipRepository extends JpaRepository<Ship, Long> {
-    List<Ship> findByServiceClasses_NameIn(List<String> serviceClassNames);
+    List<Ship> findByServiceClasses_NameInOrderById(List<String> serviceClassNames);
 
     Optional<Ship> findByNameIgnoreCase(String name);
+
+    List<Ship> findAllByOrderById();
 }

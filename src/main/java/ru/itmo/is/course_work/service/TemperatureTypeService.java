@@ -16,7 +16,7 @@ public class TemperatureTypeService {
     private final TemperatureTypeRepository temperatureTypeRepository;
 
     public List<TemperatureType> getAll() {
-        return temperatureTypeRepository.findAll();
+        return temperatureTypeRepository.findAllByOrderById();
     }
 
     public TemperatureType getByName(String name) {

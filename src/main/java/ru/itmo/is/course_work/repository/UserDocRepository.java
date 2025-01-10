@@ -6,5 +6,5 @@ import ru.itmo.is.course_work.model.UserDoc;
 import java.util.List;
 
 public interface UserDocRepository extends JpaRepository<UserDoc, Long> {
-    List<UserDoc> findAllByUser_Id(Long userId);
+    List<UserDoc> findAllByUser_IdOrderById(Long userId);
 }

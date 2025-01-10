@@ -1,11 +1,8 @@
 package ru.itmo.is.course_work.service;
 
-import jakarta.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashSet;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itmo.is.course_work.exception.CustomException;
@@ -37,7 +34,7 @@ public class ShipService {
     private final ShipStatusRepository shipStatusRepository;
 
     public List<Ship> getAll() {
-        return shipRepository.findAll();
+        return shipRepository.findAllByOrderById();
     }
 
     @Transactional
@@ -93,22 +90,22 @@ public class ShipService {
         AirType airType = physiologicalType.getAirType();
 
         if (temperatureType.getMinTemperature() > 20 && temperatureType.getMaxTemperature() < 30) {
-            return shipRepository.findByServiceClasses_NameIn(List.of("PREMIUM", "VIP"));
+            return shipRepository.findByServiceClasses_NameInOrderById(List.of("PREMIUM", "VIP"));
         }
 
         if ("Earth-like".equalsIgnoreCase(habitat.getName()) && "Oxygen".equalsIgnoreCase(airType.getName())) {
-            return shipRepository.findByServiceClasses_NameIn(List.of("VIP", "PREMIUM"));
+            return shipRepository.findByServiceClasses_NameInOrderById(List.of("VIP", "PREMIUM"));
         }
 
         if ("Desert".equalsIgnoreCase(habitat.getName()) && "Nitrogen".equalsIgnoreCase(airType.getName())) {
-            return shipRepository.findByServiceClasses_NameIn(List.of("PREMIUM"));
+            return shipRepository.findByServiceClasses_NameInOrderById(List.of("PREMIUM"));
         }
 
         if ("Oceanic".equalsIgnoreCase(habitat.getName()) && "Carbon Dioxide".equalsIgnoreCase(airType.getName())) {
-            return shipRepository.findByServiceClasses_NameIn(List.of("VIP"));
+            return shipRepository.findByServiceClasses_NameInOrderById(List.of("VIP"));
         }
 
-        return shipRepository.findAll();
+        return shipRepository.findAllByOrderById();
     }
 
     public ShipType getShipTypeById(Long id) {
@@ -121,7 +118,7 @@ public class ShipService {
         Ship ship = shipRepository.findById(shipId)
                 .orElseThrow(() -> new CustomException(ExceptionEnum.SHIP_NOT_FOUND));
 
-        List<Cargo> cargos = cargoRepository.findByShipId(shipId);
+        List<Cargo> cargos = cargoRepository.findByShipIdOrderById(shipId);
 
         for (Cargo cargo : cargos) {
             CargoCondition cargoCondition = cargo.getCargoCondition();

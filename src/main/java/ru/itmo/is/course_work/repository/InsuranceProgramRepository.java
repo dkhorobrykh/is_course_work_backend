@@ -12,6 +12,9 @@ public interface InsuranceProgramRepository extends JpaRepository<InsuranceProgr
         FROM InsuranceProgram ip
         WHERE ip.active = TRUE
           AND ip.startDatetime <= :departureDatetime
-          AND ip.endDatetime >= :arrivalDatetime""")
+          AND ip.endDatetime >= :arrivalDatetime
+        ORDER BY ip.id""")
     List<InsuranceProgram> findAvailableForFlight(Instant departureDatetime, Instant arrivalDatetime);
+
+    List<InsuranceProgram> findAllByOrderById();
 }

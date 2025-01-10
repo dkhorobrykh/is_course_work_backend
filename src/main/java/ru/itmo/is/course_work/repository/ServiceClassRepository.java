@@ -12,6 +12,7 @@ public interface ServiceClassRepository extends JpaRepository<ServiceClass, Long
         LEFT JOIN flight.ship ship
         LEFT JOIN ship.serviceClasses sc
         WHERE flight.id = :flightId
+        ORDER BY sc.id
         """)
     List<ServiceClass> findAllByFlight_Id(Long flightId);
 }

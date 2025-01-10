@@ -27,7 +27,7 @@ public class UserDocService {
         if (currentUser == null)
             throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        return userDocRepository.findAllByUser_Id(RoleService.getCurrentUser().getId());
+        return userDocRepository.findAllByUser_IdOrderById(RoleService.getCurrentUser().getId());
     }
 
     public UserDoc addNewDoc(UserDocAddDto dto) {
@@ -82,6 +82,6 @@ public class UserDocService {
     }
 
     public List<UserDocType> getAllUserDocTypes() {
-        return userDocTypeRepository.findAll();
+        return userDocTypeRepository.findAllByOrderById();
     }
 }

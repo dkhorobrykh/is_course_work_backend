@@ -16,11 +16,11 @@ public class AirService {
     private final AirTypeRepository airTypeRepository;
 
     public List<AirType> getAll() {
-        return airTypeRepository.findAll();
+        return airTypeRepository.findAllByOrderById();
     }
 
     public AirType getByName(String name) {
-        return airTypeRepository.findByNameIgnoreCase(name)
+        return airTypeRepository.findByNameIgnoreCaseOrderById(name)
             .orElseThrow(() -> new CustomException(ExceptionEnum.AIR_TYPE_NOT_FOUND));
     }
 }

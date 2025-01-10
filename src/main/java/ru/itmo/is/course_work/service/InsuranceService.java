@@ -102,19 +102,19 @@ public class InsuranceService {
     }
 
     public List<InsuranceIssued> getAllIssuedInsurancesByFlightId(Long flightId) {
-        return insuranceIssuedRepository.findAllByFlight_Id(flightId);
+        return insuranceIssuedRepository.findAllByFlight_IdOrderById(flightId);
     }
 
     public List<InsuranceIssued> getAllIssuedInsurancesByRecipientId(Long userId) {
-        return insuranceIssuedRepository.findAllByRecipient_Id(userId);
+        return insuranceIssuedRepository.findAllByRecipient_IdOrderById(userId);
     }
 
     public List<InsuranceIssued> getAllIssuedInsurancesByFlightIdAndRecipientId(Long flightId, Long userId) {
-        return insuranceIssuedRepository.findAllByFlight_IdAndRecipient_Id(flightId, userId);
+        return insuranceIssuedRepository.findAllByFlight_IdAndRecipient_IdOrderById(flightId, userId);
     }
 
     public List<InsuranceIssued> getAllIssuedInsurances() {
-        return insuranceIssuedRepository.findAll();
+        return insuranceIssuedRepository.findAllByOrderById();
     }
 
     public List<InsuranceProgram> getAllAvailableInsuranceProgramsForFlight(Long flightId) {
@@ -125,7 +125,7 @@ public class InsuranceService {
     }
 
     public List<InsuranceProgram> getAllInsurancePrograms() {
-        return insuranceProgramRepository.findAll();
+        return insuranceProgramRepository.findAllByOrderById();
     }
 
     public InsuranceProgram addNewInsuranceProgram(InsuranceProgramAddDto dto) {

@@ -11,7 +11,8 @@ public interface PassengerRepository extends JpaRepository<Passenger, Long> {
     @Query("""
 SELECT distinct p
 FROM Passenger p
-WHERE p.flight.id = :flightId""")
+WHERE p.flight.id = :flightId
+ORDER BY p.id""")
     List<Passenger> findAllByFlight_Id(Long flightId);
 
     @Query("""
@@ -23,6 +24,7 @@ WHERE p.flight.id = :flightId""")
     @Query("""
         SELECT distinct p
         FROM Passenger p
-        WHERE p.user.id = :userId""")
+        WHERE p.user.id = :userId
+        ORDER BY p.id""")
     List<Passenger> findAllByUser_Id(Long userId);
 }

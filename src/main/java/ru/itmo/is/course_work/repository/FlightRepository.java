@@ -40,6 +40,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
         FROM Flight f
         JOIN f.flightStatus fs
         WHERE fs.name = :statusName
+        ORDER BY f.id
         """)
     List<Flight> findByFlightStatusName(String statusName);
 
@@ -49,6 +50,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
         LEFT JOIN f.flightStatus fs
         
         WHERE fs.name IN :neededStatusNames
+        ORDER BY f.id
         """)
     @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {"ship"})
     List<Flight> findAllByFlightStatus_NameIn(List<String> neededStatusNames);
@@ -57,7 +59,7 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
         "ship",
         "flightSchedule"
     })
-    List<Flight> findAll();
+    List<Flight> findAllByOrderById();
 
     @Query("""
         SELECT flight

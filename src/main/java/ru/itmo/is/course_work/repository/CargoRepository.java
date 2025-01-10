@@ -8,13 +8,13 @@ import ru.itmo.is.course_work.model.Cargo;
 import java.util.List;
 
 public interface CargoRepository extends JpaRepository<Cargo, Long> {
-    List<Cargo> findAllBySender_Id(Long id);
-    List<Cargo> findAllByRecipient_Id(Long id);
-    List<Cargo> findAllByFlight_Id(Long id);
-    List<Cargo> findAllByFlightIsNull();
-    List<Cargo> findByShipId(Long shipId);
+    List<Cargo> findAllBySender_IdOrderById(Long id);
+    List<Cargo> findAllByRecipient_IdOrderById(Long id);
+    List<Cargo> findAllByFlight_IdOrderById(Long id);
+    List<Cargo> findAllByFlightIsNullOrderById();
+    List<Cargo> findByShipIdOrderById(Long shipId);
 
     @EntityGraph(type = EntityGraphType.LOAD, attributePaths = {"insuranceIssueds", "insuranceIssueds.passenger",
         "insuranceIssueds.cargo"})
-    List<Cargo> findAll();
+    List<Cargo> findAllByOrderById();
 }
