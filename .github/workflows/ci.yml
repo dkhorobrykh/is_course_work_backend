@@ -1,0 +1,39 @@
+name: Dependency Check
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+
+      # 1. Форматирование кода
+      - name: Check formatting
+        run: mvn spotless:check
+
+      # 2. Дерево зависимостей
+      - name: Show dependency tree
+        run: mvn dependency:tree
+
+      # 3. Проверка устаревших версий
+      - name: Check for updates
+        run: mvn versions:display-dependency-updates
+
+      # 4. Проверка уязвимостей
+      - name: Security scan
+        run: mvn dependency-check:check
+
+      - name: Save reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            target/dependency-check-report.html
+            target/dependency-check-report.json
