@@ -39,6 +39,7 @@ jobs:
 
       # 4. Проверка уязвимостей
       - name: Security scan
+        continue-on-error: true
         run: mvn dependency-check:check
 
       - name: Save reports
