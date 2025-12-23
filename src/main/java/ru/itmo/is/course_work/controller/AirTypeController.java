@@ -16,18 +16,17 @@ import ru.itmo.is.course_work.service.AirService;
 @RequestMapping("air")
 @Tag(
     name = "Air type controller",
-    description = "Контроллер для взаимодействия с системой типов воздуха"
-)
+    description = "Контроллер для взаимодействия с системой типов воздуха")
 @RequiredArgsConstructor
 public class AirTypeController {
-    private final AirService airService;
-    private final AirTypeMapper airTypeMapper;
+  private final AirService airService;
+  private final AirTypeMapper airTypeMapper;
 
-    @GetMapping
-    @Operation(summary = "Получить список всех типов воздуха")
-    public ResponseEntity<List<AirTypeDto>> getAll() {
-        var result = airService.getAll();
+  @GetMapping
+  @Operation(summary = "Получить список всех типов воздуха")
+  public ResponseEntity<List<AirTypeDto>> getAll() {
+    var result = airService.getAll();
 
-        return ResponseEntity.ok(airTypeMapper.toDto(result));
-    }
+    return ResponseEntity.ok(airTypeMapper.toDto(result));
+  }
 }

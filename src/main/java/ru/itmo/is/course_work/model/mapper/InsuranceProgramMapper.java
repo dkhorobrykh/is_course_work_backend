@@ -5,14 +5,17 @@ import org.mapstruct.*;
 import ru.itmo.is.course_work.model.InsuranceProgram;
 import ru.itmo.is.course_work.model.dto.InsuranceProgramDto;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    componentModel = MappingConstants.ComponentModel.SPRING)
 public interface InsuranceProgramMapper {
-    InsuranceProgram toEntity(InsuranceProgramDto insuranceProgramDto);
+  InsuranceProgram toEntity(InsuranceProgramDto insuranceProgramDto);
 
-    InsuranceProgramDto toDto(InsuranceProgram insuranceProgram);
+  InsuranceProgramDto toDto(InsuranceProgram insuranceProgram);
 
-    List<InsuranceProgramDto> toDto(List<InsuranceProgram> programs);
+  List<InsuranceProgramDto> toDto(List<InsuranceProgram> programs);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    InsuranceProgram partialUpdate(InsuranceProgramDto insuranceProgramDto, @MappingTarget InsuranceProgram insuranceProgram);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  InsuranceProgram partialUpdate(
+      InsuranceProgramDto insuranceProgramDto, @MappingTarget InsuranceProgram insuranceProgram);
 }

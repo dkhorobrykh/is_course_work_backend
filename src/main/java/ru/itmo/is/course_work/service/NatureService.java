@@ -16,22 +16,25 @@ import ru.itmo.is.course_work.repository.TemperatureTypeRepository;
 @Slf4j
 @RequiredArgsConstructor
 public class NatureService {
-    private final AirTypeRepository airTypeRepository;
-    private final HabitatRepository habitatRepository;
-    private final TemperatureTypeRepository temperatureTypeRepository;
+  private final AirTypeRepository airTypeRepository;
+  private final HabitatRepository habitatRepository;
+  private final TemperatureTypeRepository temperatureTypeRepository;
 
-    public AirType getAirTypeById(Long id) {
-        return airTypeRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.AIR_TYPE_NOT_FOUND));
-    }
+  public AirType getAirTypeById(Long id) {
+    return airTypeRepository
+        .findById(id)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.AIR_TYPE_NOT_FOUND));
+  }
 
-    public Habitat getHabitatById(Long id) {
-        return habitatRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.HABITAT_NOT_FOUND));
-    }
+  public Habitat getHabitatById(Long id) {
+    return habitatRepository
+        .findById(id)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.HABITAT_NOT_FOUND));
+  }
 
-    public TemperatureType getTemperatureTypeById(Long id) {
-        return temperatureTypeRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.TEMPERATURE_TYPE_NOT_FOUND));
-    }
+  public TemperatureType getTemperatureTypeById(Long id) {
+    return temperatureTypeRepository
+        .findById(id)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.TEMPERATURE_TYPE_NOT_FOUND));
+  }
 }

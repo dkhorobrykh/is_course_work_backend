@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.itmo.is.course_work.model.AirType;
 
 public interface AirTypeRepository extends JpaRepository<AirType, Long> {
-    Optional<AirType> findByNameIgnoreCaseOrderById(String name);
+  Optional<AirType> findByNameIgnoreCaseOrderById(String name);
 
-    List<AirType> findAllByOrderById();
+  List<AirType> findAllByOrderById();
 }

@@ -6,6 +6,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,51 +18,48 @@ import ru.itmo.is.course_work.model.User;
 import ru.itmo.is.course_work.service.JwtProvider;
 import ru.itmo.is.course_work.service.UserService;
 
-import java.io.IOException;
-
 @RequiredArgsConstructor
 @Slf4j
 @Component
 public class JwtFilter extends GenericFilterBean {
-    private final UserService userService;
+  private final UserService userService;
 
-    private static final String AUTHORIZATION = "Authorization";
+  private static final String AUTHORIZATION = "Authorization";
 
-    private final JwtProvider jwtProvider;
+  private final JwtProvider jwtProvider;
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc)
-            throws IOException, ServletException {
+  @Override
+  public void doFilter(ServletRequest request, ServletResponse response, FilterChain fc)
+      throws IOException, ServletException {
 
-        final String token = getTokenFromRequest((HttpServletRequest) request);
+    final String token = getTokenFromRequest((HttpServletRequest) request);
 
-        if (token != null && jwtProvider.validateAccessToken(token)) {
-            final Claims claims = jwtProvider.getAccessClaims(token);
-            final JwtAuthentication jwtInfoToken = generate(claims);
-            SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
-        }
-
-        fc.doFilter(request, response);
+    if (token != null && jwtProvider.validateAccessToken(token)) {
+      final Claims claims = jwtProvider.getAccessClaims(token);
+      final JwtAuthentication jwtInfoToken = generate(claims);
+      SecurityContextHolder.getContext().setAuthentication(jwtInfoToken);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request) {
-        final String bearer = request.getHeader(AUTHORIZATION);
-        if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
-            return bearer.substring(7);
-        }
-        return null;
+    fc.doFilter(request, response);
+  }
+
+  private String getTokenFromRequest(HttpServletRequest request) {
+    final String bearer = request.getHeader(AUTHORIZATION);
+    if (StringUtils.hasText(bearer) && bearer.startsWith("Bearer ")) {
+      return bearer.substring(7);
     }
+    return null;
+  }
 
-    private JwtAuthentication generate(Claims claims) {
-        final JwtAuthentication jwtInfoToken = new JwtAuthentication();
+  private JwtAuthentication generate(Claims claims) {
+    final JwtAuthentication jwtInfoToken = new JwtAuthentication();
 
-        User user = userService.getById(Long.parseLong(claims.get("userId").toString()));
+    User user = userService.getById(Long.parseLong(claims.get("userId").toString()));
 
-        jwtInfoToken.setUser(user);
+    jwtInfoToken.setUser(user);
 
-        jwtInfoToken.setAuthenticated(true);
+    jwtInfoToken.setAuthenticated(true);
 
-        return jwtInfoToken;
-    }
-
+    return jwtInfoToken;
+  }
 }

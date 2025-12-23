@@ -14,14 +14,15 @@ import ru.itmo.is.course_work.repository.ServiceClassRepository;
 @RequiredArgsConstructor
 public class ServiceClassService {
 
-    private final ServiceClassRepository serviceClassRepository;
+  private final ServiceClassRepository serviceClassRepository;
 
-    public ServiceClass getServiceClassById(Long id) {
-        return serviceClassRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.SERVICE_CLASS_NOT_FOUND));
-    }
+  public ServiceClass getServiceClassById(Long id) {
+    return serviceClassRepository
+        .findById(id)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.SERVICE_CLASS_NOT_FOUND));
+  }
 
-    public List<ServiceClass> getServiceClassesByFlightId(Long flightId) {
-        return serviceClassRepository.findAllByFlight_Id(flightId);
-    }
+  public List<ServiceClass> getServiceClassesByFlightId(Long flightId) {
+    return serviceClassRepository.findAllByFlight_Id(flightId);
+  }
 }

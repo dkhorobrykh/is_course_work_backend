@@ -16,44 +16,48 @@ import ru.itmo.is.course_work.repository.UserRepository;
 @Slf4j
 public class UserService {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    public @NonNull User getByLogin(@NonNull String login) {
-        return userRepository.findByLogin(login)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
+  public @NonNull User getByLogin(@NonNull String login) {
+    return userRepository
+        .findByLogin(login)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
+  }
+
+  public @NonNull User getById(@NonNull Long userId) {
+    return userRepository
+        .findById(userId)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
+  }
+
+  public boolean checkLoginUnique(@NonNull @NotEmpty String login) {
+    return userRepository.findByLogin(login).isEmpty();
+  }
+
+  public boolean checkEmailUnique(@NonNull @NotEmpty String email) {
+    return userRepository.findByEmail(email).isEmpty();
+  }
+
+  public User save(User user) {
+    return userRepository.saveAndFlush(user);
+  }
+
+  public User addBalance(Long userId, Double amount) {
+    if (amount <= 0) {
+      throw new CustomException(ExceptionEnum.INVALID_AMOUNT);
     }
 
-    public @NonNull User getById(@NonNull Long userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
-    }
+    var user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
 
-    public boolean checkLoginUnique(@NonNull @NotEmpty String login) {
-        return userRepository.findByLogin(login).isEmpty();
-    }
+    user.setBalance(user.getBalance() + amount);
 
-    public boolean checkEmailUnique(@NonNull @NotEmpty String email) {
-        return userRepository.findByEmail(email).isEmpty();
-    }
+    return userRepository.save(user);
+  }
 
-    public User save(User user) {
-        return userRepository.saveAndFlush(user);
-    }
-
-    public User addBalance(Long userId, Double amount) {
-        if (amount <= 0) {
-            throw new CustomException(ExceptionEnum.INVALID_AMOUNT);
-        }
-
-        var user = userRepository.findById(userId)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
-
-        user.setBalance(user.getBalance() + amount);
-
-        return userRepository.save(user);
-    }
-
-    public List<User> getAll() {
-        return userRepository.findAllByOrderById();
-    }
+  public List<User> getAll() {
+    return userRepository.findAllByOrderById();
+  }
 }

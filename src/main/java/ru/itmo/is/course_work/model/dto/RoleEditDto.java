@@ -1,14 +1,13 @@
 package ru.itmo.is.course_work.model.dto;
 
-import lombok.Value;
-
 import java.time.Instant;
+import lombok.Value;
 
 @Value
 public class RoleEditDto {
-    Boolean active;
+  Boolean active;
 
-    Instant expirationDatetime;
+  Instant expirationDatetime;
 
-    String name;
+  String name;
 }

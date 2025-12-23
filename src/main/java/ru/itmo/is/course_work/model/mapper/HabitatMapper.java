@@ -5,14 +5,16 @@ import org.mapstruct.*;
 import ru.itmo.is.course_work.model.Habitat;
 import ru.itmo.is.course_work.model.dto.HabitatDto;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    componentModel = MappingConstants.ComponentModel.SPRING)
 public interface HabitatMapper {
-    Habitat toEntity(HabitatDto habitatDto);
+  Habitat toEntity(HabitatDto habitatDto);
 
-    HabitatDto toDto(Habitat habitat);
+  HabitatDto toDto(Habitat habitat);
 
-    List<HabitatDto> toDto(List<Habitat> habitats);
+  List<HabitatDto> toDto(List<Habitat> habitats);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Habitat partialUpdate(HabitatDto habitatDto, @MappingTarget Habitat habitat);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  Habitat partialUpdate(HabitatDto habitatDto, @MappingTarget Habitat habitat);
 }

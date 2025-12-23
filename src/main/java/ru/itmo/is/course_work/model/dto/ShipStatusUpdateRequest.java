@@ -4,5 +4,5 @@ import lombok.Value;
 
 @Value
 public class ShipStatusUpdateRequest {
-    Double fuelLevel;
+  Double fuelLevel;
 }

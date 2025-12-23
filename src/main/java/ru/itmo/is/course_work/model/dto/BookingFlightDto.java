@@ -5,10 +5,7 @@ import lombok.Value;
 
 @Value
 public class BookingFlightDto {
-    @NotNull
-    Long userDocId;
-    @NotNull
-    Long flightId;
-    @NotNull
-    Long serviceClassId;
+  @NotNull Long userDocId;
+  @NotNull Long flightId;
+  @NotNull Long serviceClassId;
 }

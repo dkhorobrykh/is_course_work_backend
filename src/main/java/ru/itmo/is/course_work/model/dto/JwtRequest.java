@@ -8,6 +8,6 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class JwtRequest {
-    private String login;
-    private String password;
+  private String login;
+  private String password;
 }

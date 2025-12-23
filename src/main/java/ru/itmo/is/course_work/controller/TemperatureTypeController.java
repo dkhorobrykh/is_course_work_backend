@@ -16,18 +16,17 @@ import ru.itmo.is.course_work.service.TemperatureTypeService;
 @RequestMapping("temperature")
 @Tag(
     name = "Temperature type controller",
-    description = "Контроллер для взаимодействия с системой типов температур"
-)
+    description = "Контроллер для взаимодействия с системой типов температур")
 @RequiredArgsConstructor
 public class TemperatureTypeController {
-    private final TemperatureTypeService temperatureTypeService;
-    private final TemperatureTypeMapper temperatureTypeMapper;
+  private final TemperatureTypeService temperatureTypeService;
+  private final TemperatureTypeMapper temperatureTypeMapper;
 
-    @GetMapping
-    @Operation(summary = "Получить список всех типов температур")
-    public ResponseEntity<List<TemperatureTypeDto>> getAll() {
-        var result = temperatureTypeService.getAll();
+  @GetMapping
+  @Operation(summary = "Получить список всех типов температур")
+  public ResponseEntity<List<TemperatureTypeDto>> getAll() {
+    var result = temperatureTypeService.getAll();
 
-        return ResponseEntity.ok(temperatureTypeMapper.toDto(result));
-    }
+    return ResponseEntity.ok(temperatureTypeMapper.toDto(result));
+  }
 }

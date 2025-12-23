@@ -8,5 +8,5 @@ import lombok.extern.jackson.Jacksonized;
 @Builder
 @Jacksonized
 public class RefreshJwtRequest {
-    private String refreshToken;
+  private String refreshToken;
 }

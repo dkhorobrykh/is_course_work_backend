@@ -1,6 +1,9 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,86 +15,72 @@ import ru.itmo.is.course_work.model.dto.NewMessageDto;
 import ru.itmo.is.course_work.repository.ChatRepository;
 import ru.itmo.is.course_work.repository.MessageRepository;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class ChatService {
 
-    private final ChatRepository chatRepository;
-    private final MessageRepository messageRepository;
-    private final UserService userService;
+  private final ChatRepository chatRepository;
+  private final MessageRepository messageRepository;
+  private final UserService userService;
 
-    public List<Chat> getAllChatsForCurrentUser() {
-        var currentUser = RoleService.getCurrentUser();
+  public List<Chat> getAllChatsForCurrentUser() {
+    var currentUser = RoleService.getCurrentUser();
 
-        if (currentUser == null)
-            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+    if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        return chatRepository.findAllByUserFirst_IdOrUserSecond_IdOrderById(currentUser.getId(), currentUser.getId());
-    }
+    return chatRepository.findAllByUserFirst_IdOrUserSecond_IdOrderById(
+        currentUser.getId(), currentUser.getId());
+  }
 
-    public Chat sendMessage(Long chatId, @Valid NewMessageDto dto) {
-        var currentUser = RoleService.getCurrentUser();
+  public Chat sendMessage(Long chatId, @Valid NewMessageDto dto) {
+    var currentUser = RoleService.getCurrentUser();
 
-        if (currentUser == null)
-            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+    if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-        var chat = getChatById(chatId);
+    var chat = getChatById(chatId);
 
-        if (!Objects.equals(chat.getUserFirst().getId(), currentUser.getId()) && !Objects.equals(chat.getUserSecond().getId(), currentUser.getId()))
-            throw new CustomException(ExceptionEnum.FORBIDDEN);
+    if (!Objects.equals(chat.getUserFirst().getId(), currentUser.getId())
+        && !Objects.equals(chat.getUserSecond().getId(), currentUser.getId()))
+      throw new CustomException(ExceptionEnum.FORBIDDEN);
 
-        var newMessage = Message.builder()
+    var newMessage = Message.builder().chat(chat).text(dto.getText()).build();
 
-                .chat(chat)
-                .text(dto.getText())
+    messageRepository.saveAndFlush(newMessage);
 
-                .build();
+    return getChatById(chatId);
+  }
 
-        messageRepository.saveAndFlush(newMessage);
+  public Chat getChatById(Long chatId) {
+    return chatRepository
+        .findById(chatId)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.CHAT_NOT_FOUND));
+  }
 
-        return getChatById(chatId);
-    }
+  public Chat createChat(Long secondUserId) {
+    var currentUser = RoleService.getCurrentUser();
 
-    public Chat getChatById(Long chatId) {
-        return chatRepository.findById(chatId).orElseThrow(() -> new CustomException(ExceptionEnum.CHAT_NOT_FOUND));
-    }
+    if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-    public Chat createChat(Long secondUserId) {
-        var currentUser = RoleService.getCurrentUser();
+    var secondUser = userService.getById(secondUserId);
 
-        if (currentUser == null)
-            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+    var maybeExistingChat = findChatByUserIds(currentUser.getId(), secondUser.getId());
+    if (maybeExistingChat.isPresent()) return maybeExistingChat.get();
 
-        var secondUser = userService.getById(secondUserId);
+    if (currentUser.getId().equals(secondUser.getId()))
+      throw new CustomException(ExceptionEnum.CHAT_WITH_THE_SAME_USER);
 
-        var maybeExistingChat = findChatByUserIds(currentUser.getId(), secondUser.getId());
-        if (maybeExistingChat.isPresent())
-            return maybeExistingChat.get();
+    var newChat = Chat.builder().userFirst(currentUser).userSecond(secondUser).build();
 
-        if (currentUser.getId().equals(secondUser.getId()))
-            throw new CustomException(ExceptionEnum.CHAT_WITH_THE_SAME_USER);
+    return chatRepository.saveAndFlush(newChat);
+  }
 
-        var newChat = Chat.builder()
+  public Optional<Chat> findChatByUserIds(Long firstUserId, Long secondUserId) {
+    var res = chatRepository.findByUserFirst_IdAndUserSecond_IdOrderById(firstUserId, secondUserId);
 
-                .userFirst(currentUser)
-                .userSecond(secondUser)
+    if (res.isEmpty())
+      res = chatRepository.findByUserFirst_IdAndUserSecond_IdOrderById(secondUserId, firstUserId);
 
-                .build();
-
-        return chatRepository.saveAndFlush(newChat);
-    }
-
-    public Optional<Chat> findChatByUserIds(Long firstUserId, Long secondUserId) {
-        var res = chatRepository.findByUserFirst_IdAndUserSecond_IdOrderById(firstUserId, secondUserId);
-
-        if (res.isEmpty())
-            res = chatRepository.findByUserFirst_IdAndUserSecond_IdOrderById(secondUserId, firstUserId);
-
-        return res;
-    }
+    return res;
+  }
 }

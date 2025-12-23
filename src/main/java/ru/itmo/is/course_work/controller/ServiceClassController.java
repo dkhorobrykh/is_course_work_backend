@@ -17,18 +17,18 @@ import ru.itmo.is.course_work.service.ServiceClassService;
 @RequestMapping("serviceClass")
 @Tag(
     name = "Service class controller",
-    description = "Контроллер для взаимодействия с системой классов обслуживания на борту"
-)
+    description = "Контроллер для взаимодействия с системой классов обслуживания на борту")
 @RequiredArgsConstructor
 public class ServiceClassController {
-    private final ServiceClassService serviceClassService;
-    private final ServiceClassMapper serviceClassMapper;
+  private final ServiceClassService serviceClassService;
+  private final ServiceClassMapper serviceClassMapper;
 
-    @GetMapping("{flightId}")
-    @Operation(summary = "Получить список доступных классов обслуживания на рейсе [{flightId}]")
-    public ResponseEntity<List<ServiceClassDto>> getServiceClassesByFlightId(@PathVariable Long flightId) {
-        var result = serviceClassService.getServiceClassesByFlightId(flightId);
+  @GetMapping("{flightId}")
+  @Operation(summary = "Получить список доступных классов обслуживания на рейсе [{flightId}]")
+  public ResponseEntity<List<ServiceClassDto>> getServiceClassesByFlightId(
+      @PathVariable Long flightId) {
+    var result = serviceClassService.getServiceClassesByFlightId(flightId);
 
-        return ResponseEntity.ok(serviceClassMapper.toDto(result));
-    }
+    return ResponseEntity.ok(serviceClassMapper.toDto(result));
+  }
 }

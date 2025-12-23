@@ -12,22 +12,19 @@ import org.hibernate.envers.RevisionTimestamp;
 @Entity
 @Getter
 @Setter
-@Table(
-        name = "is_course_revision_info"
-)
+@Table(name = "is_course_revision_info")
 @AllArgsConstructor
 @NoArgsConstructor
 @RevisionEntity(AuditRevisionListener.class)
 public class AuditRevisionEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @RevisionNumber
-    private int revision_id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @RevisionNumber
+  private int revision_id;
 
-    @RevisionTimestamp
-    private long revision_timestamp;
+  @RevisionTimestamp private long revision_timestamp;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+  @ManyToOne
+  @JoinColumn(name = "user_id")
+  private User user;
 }

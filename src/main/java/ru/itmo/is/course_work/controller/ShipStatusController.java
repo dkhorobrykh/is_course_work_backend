@@ -1,7 +1,6 @@
 package ru.itmo.is.course_work.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,29 +13,22 @@ import ru.itmo.is.course_work.service.ShipStatusService;
 @RequestMapping("/ship-status")
 @RequiredArgsConstructor
 @Tag(
-        name = "Ship status controller",
-        description = "Контроллер для получения и обновления статусов судов"
-)
+    name = "Ship status controller",
+    description = "Контроллер для получения и обновления статусов судов")
 public class ShipStatusController {
-    private final ShipStatusService shipStatusService;
+  private final ShipStatusService shipStatusService;
 
-    @GetMapping("/{shipId}")
-    @Operation(
-            summary = "Позволяет получить текущий статус корабля по его shipId."
-    )
-    public ResponseEntity<ShipStatus> getShipStatus(@PathVariable Long shipId) {
-        return ResponseEntity.ok(shipStatusService.getShipStatus(shipId));
-    }
+  @GetMapping("/{shipId}")
+  @Operation(summary = "Позволяет получить текущий статус корабля по его shipId.")
+  public ResponseEntity<ShipStatus> getShipStatus(@PathVariable Long shipId) {
+    return ResponseEntity.ok(shipStatusService.getShipStatus(shipId));
+  }
 
-    @PostMapping("/{shipId}")
-    @Operation(
-            summary = "Обновляет статус корабля по переданному количеству топлива."
-    )
-    public ResponseEntity<ShipStatus> updateShipStatus(
-            @PathVariable Long shipId,
-            @RequestBody ShipStatusUpdateRequest request) {
-        ShipStatus updatedStatus = shipStatusService.updateShipStatus(
-                shipId, request.getFuelLevel());
-        return ResponseEntity.ok(updatedStatus);
-    }
+  @PostMapping("/{shipId}")
+  @Operation(summary = "Обновляет статус корабля по переданному количеству топлива.")
+  public ResponseEntity<ShipStatus> updateShipStatus(
+      @PathVariable Long shipId, @RequestBody ShipStatusUpdateRequest request) {
+    ShipStatus updatedStatus = shipStatusService.updateShipStatus(shipId, request.getFuelLevel());
+    return ResponseEntity.ok(updatedStatus);
+  }
 }

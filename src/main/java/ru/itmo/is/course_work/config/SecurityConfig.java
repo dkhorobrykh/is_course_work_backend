@@ -19,33 +19,35 @@ import ru.itmo.is.course_work.filter.JwtFilter;
 @EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-    private final JwtFilter jwtFilter;
-    private final ExceptionHandlerFilter exceptionHandlerFilter;
+  private final JwtFilter jwtFilter;
+  private final ExceptionHandlerFilter exceptionHandlerFilter;
 
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .httpBasic(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(authz ->
-                        authz
-                                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+  @Bean
+  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    http.httpBasic(AbstractHttpConfigurer::disable)
+        .csrf(AbstractHttpConfigurer::disable)
+        .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+        .authorizeHttpRequests(
+            authz ->
+                authz
+                    .requestMatchers(HttpMethod.OPTIONS)
+                    .permitAll()
+                    .requestMatchers(
+                        HttpMethod.POST,
+                        "/authorization/confirm",
+                        "/authorization/token",
+                        "/authorization/register")
+                    .permitAll()
+                    .requestMatchers("/swagger-ui/**", "/v3/api-docs/**")
+                    .permitAll()
+                    .requestMatchers("/demo/**")
+                    .authenticated()
+                    .anyRequest()
+                    .authenticated())
+        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+        //                .addFilterAfter(headersFilter, JwtFilter.class)
+        .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
 
-                                .requestMatchers(HttpMethod.POST, "/authorization/confirm", "/authorization/token", "/authorization/register").permitAll()
-
-                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
-                                .requestMatchers("/demo/**").authenticated()
-
-                                .anyRequest().authenticated()
-                )
-                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-//                .addFilterAfter(headersFilter, JwtFilter.class)
-                .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
-
-
-        return http.build();
-    }
+    return http.build();
+  }
 }
-

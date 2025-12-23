@@ -1,6 +1,7 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -12,146 +13,131 @@ import ru.itmo.is.course_work.model.dto.InsuranceIssueRequestDto;
 import ru.itmo.is.course_work.model.dto.InsuranceProgramAddDto;
 import ru.itmo.is.course_work.repository.InsuranceIssuedRepository;
 import ru.itmo.is.course_work.repository.InsuranceProgramRepository;
-
-import java.time.Instant;
-import java.util.List;
+import ru.itmo.is.course_work.util.InsuranceProgramUtil;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class InsuranceService {
 
-    private final InsuranceProgramRepository insuranceProgramRepository;
-    private final InsuranceIssuedRepository insuranceIssuedRepository;
-    private final PassengerService passengerService;
-    private final CargoService cargoService;
-    private final FlightService flightService;
-    private final UserService userService;
+  private final InsuranceProgramRepository insuranceProgramRepository;
+  private final InsuranceIssuedRepository insuranceIssuedRepository;
+  private final PassengerService passengerService;
+  private final CargoService cargoService;
+  private final FlightService flightService;
+  private final UserService userService;
 
-    public InsuranceProgram getInsuranceProgramById(Long id) {
-        return insuranceProgramRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.INSURANCE_PROGRAM_NOT_FOUND));
+  public InsuranceProgram getInsuranceProgramById(Long id) {
+    return insuranceProgramRepository
+        .findById(id)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.INSURANCE_PROGRAM_NOT_FOUND));
+  }
+
+  public InsuranceIssued issueNewInsurance(@Valid InsuranceIssueRequestDto dto) {
+    var currentUser = RoleService.getCurrentUser();
+
+    if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+
+    var passenger =
+        dto.getPassengerId() != null
+            ? passengerService.getPassengerById(dto.getPassengerId())
+            : null;
+
+    var cargo = dto.getCargoId() != null ? cargoService.getCargoById(dto.getCargoId()) : null;
+
+    if (cargo != null && passenger != null)
+      throw new CustomException(
+          ExceptionEnum.PASSENGER_AND_CARGO_SHOULD_BE_IN_DIFFERENT_INSURANCES);
+
+    var flight = flightService.getFlightById(dto.getFlightId());
+
+    var insuranceProgram = getInsuranceProgramById(dto.getInsuranceProgramId());
+
+    if (!InsuranceProgramUtil.isActiveAtDatetime(
+            insuranceProgram, flight.getFlightSchedule().getDepartureDatetime())
+        || !InsuranceProgramUtil.isActiveAtDatetime(
+            insuranceProgram, flight.getFlightSchedule().getArrivalDatetime()))
+      throw new CustomException(ExceptionEnum.WRONG_INSURANCE_PROGRAM_IS_NOT_ACTIVE_AT_FLIGHT_DATE);
+
+    if (!insuranceProgram.isActive())
+      throw new CustomException(ExceptionEnum.INSURANCE_PROGRAM_IS_NOT_ACTIVE);
+
+    var totalCost = calculateTotalCostForInsurance(dto);
+    if (currentUser.getBalance() < totalCost) {
+      throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);
     }
 
-    public InsuranceIssued issueNewInsurance(@Valid InsuranceIssueRequestDto dto) {
-        var currentUser = RoleService.getCurrentUser();
+    currentUser.setBalance(currentUser.getBalance() - totalCost);
 
-        if (currentUser == null)
-            throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+    var newInsurance =
+        InsuranceIssued.builder()
+            .passenger(passenger)
+            .cargo(cargo)
+            .totalCost(totalCost)
+            .insuranceProgram(insuranceProgram)
+            .flight(flight)
+            .recipient(currentUser)
+            .build();
 
-        var passenger = dto.getPassengerId() != null
-                ? passengerService.getPassengerById(dto.getPassengerId())
-                : null;
+    return insuranceIssuedRepository.saveAndFlush(newInsurance);
+  }
 
-        var cargo = dto.getCargoId() != null
-                ? cargoService.getCargoById(dto.getCargoId())
-                : null;
+  public Integer calculateTotalCostForInsurance(@Valid InsuranceIssueRequestDto dto) {
+    var insuranceProgram = getInsuranceProgramById(dto.getInsuranceProgramId());
 
-        if (cargo != null && passenger != null)
-            throw new CustomException(ExceptionEnum.PASSENGER_AND_CARGO_SHOULD_BE_IN_DIFFERENT_INSURANCES);
+    return insuranceProgram.getMinCost();
+  }
 
-        var flight = flightService.getFlightById(dto.getFlightId());
+  public List<InsuranceIssued> getAllIssuedInsurancesByFlightId(Long flightId) {
+    return insuranceIssuedRepository.findAllByFlight_IdOrderById(flightId);
+  }
 
-        var insuranceProgram = getInsuranceProgramById(dto.getInsuranceProgramId());
+  public List<InsuranceIssued> getAllIssuedInsurancesByRecipientId(Long userId) {
+    return insuranceIssuedRepository.findAllByRecipient_IdOrderById(userId);
+  }
 
-        if (!programIsNotActiveAtDatetime(insuranceProgram, flight.getFlightSchedule().getDepartureDatetime()) || !programIsNotActiveAtDatetime(insuranceProgram, flight.getFlightSchedule().getArrivalDatetime()))
-            throw new CustomException(ExceptionEnum.WRONG_INSURANCE_PROGRAM_IS_NOT_ACTIVE_AT_FLIGHT_DATE);
+  public List<InsuranceIssued> getAllIssuedInsurancesByFlightIdAndRecipientId(
+      Long flightId, Long userId) {
+    return insuranceIssuedRepository.findAllByFlight_IdAndRecipient_IdOrderById(flightId, userId);
+  }
 
-        if (!insuranceProgram.isActive())
-            throw new CustomException(ExceptionEnum.INSURANCE_PROGRAM_IS_NOT_ACTIVE);
+  public List<InsuranceIssued> getAllIssuedInsurances() {
+    return insuranceIssuedRepository.findAllByOrderById();
+  }
 
-        var totalCost = calculateTotalCostForInsurance(dto);
-        if (currentUser.getBalance() < totalCost) {
-            throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);
-        }
+  public List<InsuranceProgram> getAllAvailableInsuranceProgramsForFlight(Long flightId) {
+    var flight = flightService.getFlightById(flightId);
 
-        currentUser.setBalance(currentUser.getBalance() - totalCost);
+    return insuranceProgramRepository.findAvailableForFlight(
+        flight.getFlightSchedule().getDepartureDatetime(),
+        flight.getFlightSchedule().getArrivalDatetime());
+  }
 
-        var newInsurance = InsuranceIssued.builder()
+  public List<InsuranceProgram> getAllInsurancePrograms() {
+    return insuranceProgramRepository.findAllByOrderById();
+  }
 
-                .passenger(passenger)
-                .cargo(cargo)
-                .totalCost(totalCost)
-                .insuranceProgram(insuranceProgram)
-                .flight(flight)
-                .recipient(currentUser)
+  public InsuranceProgram addNewInsuranceProgram(InsuranceProgramAddDto dto) {
+    var name = dto.getName();
 
-                .build();
+    var rank = dto.getRank();
+    if (rank < 0) throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
 
-        return insuranceIssuedRepository.saveAndFlush(newInsurance);
-    }
+    var minCost = dto.getMinCost();
+    if (minCost <= 0) throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
 
-    public Integer calculateTotalCostForInsurance(@Valid InsuranceIssueRequestDto dto) {
-        var insuranceProgram = getInsuranceProgramById(dto.getInsuranceProgramId());
+    var refundAmount = dto.getRefundAmount();
+    if (refundAmount <= 0) throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
 
-        return insuranceProgram.getMinCost();
-    }
+    var startDatetime = dto.getStartDatetime();
 
-    public static boolean programIsNotActiveAtDatetime(InsuranceProgram insuranceProgram, Instant timestamp) {
-        if (insuranceProgram.getStartDatetime() != null)
-            if (insuranceProgram.getEndDatetime() != null)
-                return insuranceProgram.getStartDatetime().isBefore(timestamp)
-                        && insuranceProgram.getEndDatetime().isAfter(timestamp);
-            else
-                return insuranceProgram.getStartDatetime().isBefore(timestamp);
-        else
-            if (insuranceProgram.getEndDatetime() != null)
-                return insuranceProgram.getEndDatetime().isAfter(timestamp);
-            else
-                return true;
-    }
+    var endDatetime = dto.getEndDatetime();
 
-    public List<InsuranceIssued> getAllIssuedInsurancesByFlightId(Long flightId) {
-        return insuranceIssuedRepository.findAllByFlight_IdOrderById(flightId);
-    }
+    if (startDatetime.isAfter(endDatetime))
+      throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
 
-    public List<InsuranceIssued> getAllIssuedInsurancesByRecipientId(Long userId) {
-        return insuranceIssuedRepository.findAllByRecipient_IdOrderById(userId);
-    }
-
-    public List<InsuranceIssued> getAllIssuedInsurancesByFlightIdAndRecipientId(Long flightId, Long userId) {
-        return insuranceIssuedRepository.findAllByFlight_IdAndRecipient_IdOrderById(flightId, userId);
-    }
-
-    public List<InsuranceIssued> getAllIssuedInsurances() {
-        return insuranceIssuedRepository.findAllByOrderById();
-    }
-
-    public List<InsuranceProgram> getAllAvailableInsuranceProgramsForFlight(Long flightId) {
-        var flight = flightService.getFlightById(flightId);
-
-        return insuranceProgramRepository.findAvailableForFlight(flight.getFlightSchedule().getDepartureDatetime(),
-            flight.getFlightSchedule().getArrivalDatetime());
-    }
-
-    public List<InsuranceProgram> getAllInsurancePrograms() {
-        return insuranceProgramRepository.findAllByOrderById();
-    }
-
-    public InsuranceProgram addNewInsuranceProgram(InsuranceProgramAddDto dto) {
-        var name = dto.getName();
-
-        var rank = dto.getRank();
-        if (rank < 0)
-            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
-
-        var minCost = dto.getMinCost();
-        if (minCost <= 0)
-            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
-
-        var refundAmount = dto.getRefundAmount();
-        if (refundAmount <= 0)
-            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
-
-        var startDatetime = dto.getStartDatetime();
-
-        var endDatetime = dto.getEndDatetime();
-
-        if (startDatetime.isAfter(endDatetime))
-            throw new CustomException(ExceptionEnum.VALIDATION_EXCEPTION);
-
-        var newProgram = InsuranceProgram.builder()
-
+    var newProgram =
+        InsuranceProgram.builder()
             .name(name)
             .rank(rank)
             .minCost(minCost)
@@ -159,10 +145,8 @@ public class InsuranceService {
             .active(true)
             .startDatetime(startDatetime)
             .endDatetime(endDatetime)
-
             .build();
 
-        return insuranceProgramRepository.saveAndFlush(newProgram);
-
-    }
+    return insuranceProgramRepository.saveAndFlush(newProgram);
+  }
 }

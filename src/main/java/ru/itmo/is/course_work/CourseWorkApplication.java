@@ -11,8 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class CourseWorkApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(CourseWorkApplication.class, args);
-    }
-
+  public static void main(String[] args) {
+    SpringApplication.run(CourseWorkApplication.class, args);
+  }
 }

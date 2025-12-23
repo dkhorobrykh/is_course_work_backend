@@ -5,14 +5,16 @@ import org.mapstruct.*;
 import ru.itmo.is.course_work.model.UserDocType;
 import ru.itmo.is.course_work.model.dto.UserDocTypeDto;
 
-@Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
+@Mapper(
+    unmappedTargetPolicy = ReportingPolicy.IGNORE,
+    componentModel = MappingConstants.ComponentModel.SPRING)
 public interface UserDocTypeMapper {
-    UserDocType toEntity(UserDocTypeDto userDocTypeDto);
+  UserDocType toEntity(UserDocTypeDto userDocTypeDto);
 
-    UserDocTypeDto toDto(UserDocType userDocType);
+  UserDocTypeDto toDto(UserDocType userDocType);
 
-    List<UserDocTypeDto> toDto(List<UserDocType> userDocTypes);
+  List<UserDocTypeDto> toDto(List<UserDocType> userDocTypes);
 
-    @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    UserDocType partialUpdate(UserDocTypeDto userDocTypeDto, @MappingTarget UserDocType userDocType);
+  @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+  UserDocType partialUpdate(UserDocTypeDto userDocTypeDto, @MappingTarget UserDocType userDocType);
 }

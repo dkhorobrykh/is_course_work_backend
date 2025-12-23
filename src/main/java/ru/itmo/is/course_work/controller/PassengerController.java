@@ -16,18 +16,17 @@ import ru.itmo.is.course_work.service.PassengerService;
 @RequestMapping("passenger")
 @Tag(
     name = "Passenger controller",
-    description = "Контроллер для взаимодействия с системой бронирования"
-)
+    description = "Контроллер для взаимодействия с системой бронирования")
 @RequiredArgsConstructor
 public class PassengerController {
-    private final PassengerService passengerService;
-    private final PassengerMapper passengerMapper;
+  private final PassengerService passengerService;
+  private final PassengerMapper passengerMapper;
 
-    @GetMapping
-    @Operation(summary = "Получить список оформленных бронирований для текущего пользователя")
-    public ResponseEntity<List<PassengerDto>> getAllBooksForCurrentUser() {
-        var result = passengerService.getAllBooksByCurrentUser();
+  @GetMapping
+  @Operation(summary = "Получить список оформленных бронирований для текущего пользователя")
+  public ResponseEntity<List<PassengerDto>> getAllBooksForCurrentUser() {
+    var result = passengerService.getAllBooksByCurrentUser();
 
-        return ResponseEntity.ok(passengerMapper.toDto(result));
-    }
+    return ResponseEntity.ok(passengerMapper.toDto(result));
+  }
 }

@@ -12,10 +12,11 @@ import ru.itmo.is.course_work.repository.FlightStatusRepository;
 @Slf4j
 @RequiredArgsConstructor
 public class FlightStatusService {
-    private final FlightStatusRepository flightStatusRepository;
+  private final FlightStatusRepository flightStatusRepository;
 
-    public FlightStatus getFlightStatusByName(String name) {
-        return flightStatusRepository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.FLIGHT_STATUS_NOT_FOUND));
-    }
+  public FlightStatus getFlightStatusByName(String name) {
+    return flightStatusRepository
+        .findByNameIgnoreCase(name)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.FLIGHT_STATUS_NOT_FOUND));
+  }
 }

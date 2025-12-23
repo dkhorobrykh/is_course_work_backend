@@ -13,14 +13,15 @@ import ru.itmo.is.course_work.repository.AirTypeRepository;
 @RequiredArgsConstructor
 @Slf4j
 public class AirService {
-    private final AirTypeRepository airTypeRepository;
+  private final AirTypeRepository airTypeRepository;
 
-    public List<AirType> getAll() {
-        return airTypeRepository.findAllByOrderById();
-    }
+  public List<AirType> getAll() {
+    return airTypeRepository.findAllByOrderById();
+  }
 
-    public AirType getByName(String name) {
-        return airTypeRepository.findByNameIgnoreCaseOrderById(name)
-            .orElseThrow(() -> new CustomException(ExceptionEnum.AIR_TYPE_NOT_FOUND));
-    }
+  public AirType getByName(String name) {
+    return airTypeRepository
+        .findByNameIgnoreCaseOrderById(name)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.AIR_TYPE_NOT_FOUND));
+  }
 }

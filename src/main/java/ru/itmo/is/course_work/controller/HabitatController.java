@@ -16,19 +16,18 @@ import ru.itmo.is.course_work.service.HabitatService;
 @RequestMapping("habitat")
 @Tag(
     name = "Habitat controller",
-    description = "Контроллер для взаимодействия с системой среды обитания"
-)
+    description = "Контроллер для взаимодействия с системой среды обитания")
 @RequiredArgsConstructor
 public class HabitatController {
 
-    private final HabitatService habitatService;
-    private final HabitatMapper habitatMapper;
+  private final HabitatService habitatService;
+  private final HabitatMapper habitatMapper;
 
-    @GetMapping
-    @Operation(summary = "Получить список всех сред обитаний")
-    public ResponseEntity<List<HabitatDto>> getAllHabitats() {
-        var result = habitatService.getAllHabitats();
+  @GetMapping
+  @Operation(summary = "Получить список всех сред обитаний")
+  public ResponseEntity<List<HabitatDto>> getAllHabitats() {
+    var result = habitatService.getAllHabitats();
 
-        return ResponseEntity.ok(habitatMapper.toDto(result));
-    }
+    return ResponseEntity.ok(habitatMapper.toDto(result));
+  }
 }

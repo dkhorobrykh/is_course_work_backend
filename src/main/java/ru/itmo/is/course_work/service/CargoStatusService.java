@@ -12,10 +12,11 @@ import ru.itmo.is.course_work.repository.CargoStatusRepository;
 @Slf4j
 @RequiredArgsConstructor
 public class CargoStatusService {
-    private final CargoStatusRepository cargoStatusRepository;
+  private final CargoStatusRepository cargoStatusRepository;
 
-    public CargoStatus getCargoStatusByName(String name) {
-        return cargoStatusRepository.findByNameIgnoreCase(name)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.CARGO_STATUS_NOT_FOUND));
-    }
+  public CargoStatus getCargoStatusByName(String name) {
+    return cargoStatusRepository
+        .findByNameIgnoreCase(name)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.CARGO_STATUS_NOT_FOUND));
+  }
 }

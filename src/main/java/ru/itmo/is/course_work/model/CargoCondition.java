@@ -4,30 +4,27 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(
-        name = "is_course_cargo_condition"
-)
+@Table(name = "is_course_cargo_condition")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 public class CargoCondition {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
+  private Long id;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "air_type_id", nullable = false)
-    private AirType airType;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "air_type_id", nullable = false)
+  private AirType airType;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "habitat_id", nullable = false)
-    private Habitat habitat;
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "habitat_id", nullable = false)
+  private Habitat habitat;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "temperature_type_id", nullable = false)
-    private TemperatureType temperatureType;
-
+  @ManyToOne(optional = false)
+  @JoinColumn(name = "temperature_type_id", nullable = false)
+  private TemperatureType temperatureType;
 }

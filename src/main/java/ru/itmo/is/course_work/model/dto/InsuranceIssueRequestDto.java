@@ -5,10 +5,8 @@ import lombok.Value;
 
 @Value
 public class InsuranceIssueRequestDto {
-    Long passengerId;
-    Long cargoId;
-    @NotNull
-    Long insuranceProgramId;
-    @NotNull
-    Long flightId;
+  Long passengerId;
+  Long cargoId;
+  @NotNull Long insuranceProgramId;
+  @NotNull Long flightId;
 }

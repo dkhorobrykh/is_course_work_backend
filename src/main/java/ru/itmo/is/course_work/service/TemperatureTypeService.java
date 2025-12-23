@@ -13,14 +13,15 @@ import ru.itmo.is.course_work.repository.TemperatureTypeRepository;
 @RequiredArgsConstructor
 @Slf4j
 public class TemperatureTypeService {
-    private final TemperatureTypeRepository temperatureTypeRepository;
+  private final TemperatureTypeRepository temperatureTypeRepository;
 
-    public List<TemperatureType> getAll() {
-        return temperatureTypeRepository.findAllByOrderById();
-    }
+  public List<TemperatureType> getAll() {
+    return temperatureTypeRepository.findAllByOrderById();
+  }
 
-    public TemperatureType getByName(String name) {
-        return temperatureTypeRepository.findByNameIgnoreCase(name)
-            .orElseThrow(() -> new CustomException(ExceptionEnum.TEMPERATURE_TYPE_NOT_FOUND));
-    }
+  public TemperatureType getByName(String name) {
+    return temperatureTypeRepository
+        .findByNameIgnoreCase(name)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.TEMPERATURE_TYPE_NOT_FOUND));
+  }
 }

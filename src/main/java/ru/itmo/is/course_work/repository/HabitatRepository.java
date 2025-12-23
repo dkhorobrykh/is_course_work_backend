@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import ru.itmo.is.course_work.model.Habitat;
 
 public interface HabitatRepository extends JpaRepository<Habitat, Long> {
-    Optional<Habitat> findByNameIgnoreCase(String name);
+  Optional<Habitat> findByNameIgnoreCase(String name);
 
-    List<Habitat> findAllByOrderById();
+  List<Habitat> findAllByOrderById();
 }

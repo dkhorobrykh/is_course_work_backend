@@ -1,21 +1,20 @@
 package ru.itmo.is.course_work.model.dto;
 
 import jakarta.validation.constraints.NotEmpty;
+import java.io.Serializable;
 import lombok.Value;
 import org.hibernate.validator.constraints.Length;
 
-import java.io.Serializable;
-
-/**
- * DTO for {@link ru.itmo.is.course_work.model.ScheduleStatus}
- */
+/** DTO for {@link ru.itmo.is.course_work.model.ScheduleStatus} */
 @Value
 public class ScheduleStatusDto implements Serializable {
-    Long id;
-    @NotEmpty
-    @Length(max = 100)
-    String name;
-    @NotEmpty
-    @Length(max = 100)
-    String outputName;
+  Long id;
+
+  @NotEmpty
+  @Length(max = 100)
+  String name;
+
+  @NotEmpty
+  @Length(max = 100)
+  String outputName;
 }

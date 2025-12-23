@@ -1,6 +1,9 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,92 +14,82 @@ import ru.itmo.is.course_work.model.dto.RoleAddDto;
 import ru.itmo.is.course_work.model.dto.RoleEditDto;
 import ru.itmo.is.course_work.repository.RoleRepository;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class RoleAssignService {
 
-    private final RoleRepository roleRepository;
-    private final FlightService flightService;
-    private final PlanetService planetService;
-    private final UserService userService;
+  private final RoleRepository roleRepository;
+  private final FlightService flightService;
+  private final PlanetService planetService;
+  private final UserService userService;
 
-    public List<Role> getAllRoles() {
-        return roleRepository.findAllByOrderById();
-    }
+  public List<Role> getAllRoles() {
+    return roleRepository.findAllByOrderById();
+  }
 
-    public Role getRoleById(Long roleId) {
-        return roleRepository.findById(roleId)
-                .orElseThrow(() -> new CustomException(ExceptionEnum.ROLE_NOT_FOUND));
-    }
+  public Role getRoleById(Long roleId) {
+    return roleRepository
+        .findById(roleId)
+        .orElseThrow(() -> new CustomException(ExceptionEnum.ROLE_NOT_FOUND));
+  }
 
-    public Role addRole(@Valid RoleAddDto dto) {
+  public Role addRole(@Valid RoleAddDto dto) {
 
-        var name = dto.getName();
+    var name = dto.getName();
 
-        var flight = dto.getFlightId() != null
-                ? flightService.getFlightById(dto.getFlightId())
-                : null;
+    var flight = dto.getFlightId() != null ? flightService.getFlightById(dto.getFlightId()) : null;
 
-        var planet = dto.getPlanetId() != null
-                ? planetService.getPlanetById(dto.getPlanetId())
-                : null;
+    var planet = dto.getPlanetId() != null ? planetService.getPlanetById(dto.getPlanetId()) : null;
 
-        var active = Optional.ofNullable(dto.getActive()).orElse(false);
+    var active = Optional.ofNullable(dto.getActive()).orElse(false);
 
-        var expirationDatetime = dto.getExpirationDatetime();
+    var expirationDatetime = dto.getExpirationDatetime();
 
-        var newRole = Role.builder()
+    var newRole =
+        Role.builder()
+            .name(name)
+            .flight(flight)
+            .planet(planet)
+            .active(active)
+            .expirationDatetime(expirationDatetime)
+            .build();
 
-                .name(name)
-                .flight(flight)
-                .planet(planet)
-                .active(active)
-                .expirationDatetime(expirationDatetime)
+    return roleRepository.saveAndFlush(newRole);
+  }
 
-                .build();
+  public void addRoleToUser(Long roleId, Long userId) {
+    var user = userService.getById(userId);
+    var role = getRoleById(roleId);
 
-        return roleRepository.saveAndFlush(newRole);
-    }
+    user.getRoles().add(role);
+    userService.save(user);
+  }
 
-    public void addRoleToUser(Long roleId, Long userId) {
-        var user = userService.getById(userId);
-        var role = getRoleById(roleId);
+  public void deleteRoleFromUser(Long roleId, Long userId) {
+    var user = userService.getById(userId);
+    var role = getRoleById(roleId);
 
-        user.getRoles().add(role);
-        userService.save(user);
-    }
+    user.setRoles(
+        user.getRoles().stream()
+            .filter(x -> !x.getId().equals(role.getId()))
+            .collect(Collectors.toSet()));
 
-    public void deleteRoleFromUser(Long roleId, Long userId) {
-        var user = userService.getById(userId);
-        var role = getRoleById(roleId);
+    userService.save(user);
+  }
 
-        user.setRoles(user.getRoles().stream().filter(x -> !x.getId().equals(role.getId())).collect(Collectors.toSet()));
+  public void editRole(Long roleId, @Valid RoleEditDto dto) {
+    var role = getRoleById(roleId);
 
-        userService.save(user);
-    }
+    var active = dto.getActive() != null ? dto.getActive() : null;
 
-    public void editRole(Long roleId, @Valid RoleEditDto dto) {
-        var role = getRoleById(roleId);
+    var expirationDatetime =
+        dto.getExpirationDatetime() != null ? dto.getExpirationDatetime() : null;
 
-        var active = dto.getActive() != null
-                ? dto.getActive()
-                : null;
+    if (active != null) role.setActive(active);
 
-        var expirationDatetime = dto.getExpirationDatetime() != null
-                ? dto.getExpirationDatetime()
-                : null;
+    if (expirationDatetime != null) role.setExpirationDatetime(expirationDatetime);
 
-        if (active != null)
-            role.setActive(active);
-
-        if (expirationDatetime != null)
-            role.setExpirationDatetime(expirationDatetime);
-
-        roleRepository.saveAndFlush(role);
-    }
+    roleRepository.saveAndFlush(role);
+  }
 }

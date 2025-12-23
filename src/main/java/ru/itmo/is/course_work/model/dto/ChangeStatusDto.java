@@ -6,7 +6,5 @@ import lombok.Value;
 
 @Value
 public class ChangeStatusDto {
-    @NotNull
-    @NotEmpty
-    String newStatus;
+  @NotNull @NotEmpty String newStatus;
 }

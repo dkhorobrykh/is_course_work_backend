@@ -14,51 +14,51 @@ import ru.itmo.is.course_work.repository.ShipStatusRepository;
 @RequiredArgsConstructor
 public class PreFlightCheckService {
 
-    private final ShipStatusService shipStatusService;
-    private final FlightScheduleService flightScheduleService;
-    private final FlightScheduleRepository flightScheduleRepository;
-    private final ShipStatusRepository shipStatusRepository;
+  private final ShipStatusService shipStatusService;
+  private final FlightScheduleService flightScheduleService;
+  private final FlightScheduleRepository flightScheduleRepository;
+  private final ShipStatusRepository shipStatusRepository;
 
-    private boolean protectionAdded = false;
+  private boolean protectionAdded = false;
 
-    public boolean performPreFlightChecks(Long scheduleId) {
-        FlightSchedule schedule = flightScheduleService.getScheduleById(scheduleId);
-        var flight = flightScheduleService.getFlightByScheduleId(scheduleId);
-        ShipStatus shipStatus = shipStatusService.getShipStatus(flight.getShip().getId());
+  public boolean performPreFlightChecks(Long scheduleId) {
+    FlightSchedule schedule = flightScheduleService.getScheduleById(scheduleId);
+    var flight = flightScheduleService.getFlightByScheduleId(scheduleId);
+    ShipStatus shipStatus = shipStatusService.getShipStatus(flight.getShip().getId());
 
-        if (shipStatus.getFuelStatus() == ShipStatus.FuelStatus.CRITICAL) {
-            throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_FUEL);
-        } else if (shipStatus.getFuelStatus() == ShipStatus.FuelStatus.LOW) {
-            throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_FUEL);
-        }
-
-        if (shipStatus.getEngineStatus() == ShipStatus.EngineStatus.CRITICAL) {
-            throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_ENGINE);
-        } else if (shipStatus.getEngineStatus() == ShipStatus.EngineStatus.WARNING) {
-            throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_ENGINE);
-        }
-
-        Planet departurePlanet = schedule.getPlanetDeparture();
-        Planet arrivalPlanet = schedule.getPlanetArrival();
-
-        if (!departurePlanet.getGalaxy().equals(arrivalPlanet.getGalaxy())) {
-            ensureProtectionFromAnomaliesAndRadiation(shipStatus);
-            protectionAdded = true;
-        }
-
-        return true;
+    if (shipStatus.getFuelStatus() == ShipStatus.FuelStatus.CRITICAL) {
+      throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_FUEL);
+    } else if (shipStatus.getFuelStatus() == ShipStatus.FuelStatus.LOW) {
+      throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_FUEL);
     }
 
-    private void ensureProtectionFromAnomaliesAndRadiation(ShipStatus shipStatus) {
-        shipStatus.setRadiationResistance(ShipStatus.RadiationResistance.RESISTANT);
-        shipStatusRepository.save(shipStatus);
+    if (shipStatus.getEngineStatus() == ShipStatus.EngineStatus.CRITICAL) {
+      throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_ENGINE);
+    } else if (shipStatus.getEngineStatus() == ShipStatus.EngineStatus.WARNING) {
+      throw new CustomException(ExceptionEnum.PREFLIGHT_CHECK_FAILED_ENGINE);
     }
 
-    public boolean isProtectionAdded() {
-        return protectionAdded;
+    Planet departurePlanet = schedule.getPlanetDeparture();
+    Planet arrivalPlanet = schedule.getPlanetArrival();
+
+    if (!departurePlanet.getGalaxy().equals(arrivalPlanet.getGalaxy())) {
+      ensureProtectionFromAnomaliesAndRadiation(shipStatus);
+      protectionAdded = true;
     }
 
-    public void resetProtectionAdded() {
-        protectionAdded = false;
-    }
+    return true;
+  }
+
+  private void ensureProtectionFromAnomaliesAndRadiation(ShipStatus shipStatus) {
+    shipStatus.setRadiationResistance(ShipStatus.RadiationResistance.RESISTANT);
+    shipStatusRepository.save(shipStatus);
+  }
+
+  public boolean isProtectionAdded() {
+    return protectionAdded;
+  }
+
+  public void resetProtectionAdded() {
+    protectionAdded = false;
+  }
 }

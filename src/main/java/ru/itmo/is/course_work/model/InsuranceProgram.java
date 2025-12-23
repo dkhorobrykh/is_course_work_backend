@@ -1,44 +1,41 @@
 package ru.itmo.is.course_work.model;
 
 import jakarta.persistence.*;
+import java.time.Instant;
 import lombok.*;
 
-import java.time.Instant;
-
 @Entity
-@Table(
-        name = "is_course_insurance_program"
-)
+@Table(name = "is_course_insurance_program")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 public class InsuranceProgram {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(name = "id", nullable = false)
+  private Long id;
 
-    @Column(name = "name", nullable = false)
-    private String name;
+  @Column(name = "name", nullable = false)
+  private String name;
 
-    @Column(name = "rank", nullable = false)
-    private Integer rank;
+  @Column(name = "rank", nullable = false)
+  private Integer rank;
 
-    @Column(name = "min_cost", nullable = false)
-    private Integer minCost;
+  @Column(name = "min_cost", nullable = false)
+  private Integer minCost;
 
-    @Column(name = "refund_amount", nullable = false)
-    private Integer refundAmount;
+  @Column(name = "refund_amount", nullable = false)
+  private Integer refundAmount;
 
-    @Builder.Default
-    @Column(name = "active", nullable = false)
-    private boolean active = false;
+  @Builder.Default
+  @Column(name = "active", nullable = false)
+  private boolean active = false;
 
-    @Column(name = "start_datetime", nullable = false)
-    private Instant startDatetime;
+  @Column(name = "start_datetime", nullable = false)
+  private Instant startDatetime;
 
-    @Column(name = "end_datetime", nullable = false)
-    private Instant endDatetime;
+  @Column(name = "end_datetime", nullable = false)
+  private Instant endDatetime;
 }
