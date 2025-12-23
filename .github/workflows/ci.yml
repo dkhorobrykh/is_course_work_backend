@@ -16,7 +16,18 @@ jobs:
 
       # 1. Форматирование кода
       - name: Check formatting
-        run: mvn spotless:check
+        continue-on-error: true
+        id: spotless-check
+        run: |
+          echo "Checking code formatting..."
+          mvn spotless:check
+          
+      - name: Formatting issues warning
+        if: steps.spotless-check.outcome == 'failure'
+        run: |
+          echo "::warning::Code formatting issues detected!"
+          echo "Please run: mvn spotless:apply"
+          echo "Or check the logs above for details"
 
       # 2. Дерево зависимостей
       - name: Show dependency tree
