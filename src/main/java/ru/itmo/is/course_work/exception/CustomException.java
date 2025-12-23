@@ -10,4 +10,9 @@ public class CustomException extends RuntimeException {
     super("%s: %s".formatted(exceptionEnum.getError(), exceptionEnum.getMessage()));
     this.exceptionEnum = exceptionEnum;
   }
+
+    public CustomException(ExceptionEnum exceptionEnum, String customMessage) {
+        super(customMessage);
+        this.exceptionEnum = exceptionEnum;
+    }
 }

@@ -1,15 +1,18 @@
 package ru.itmo.is.course_work.service;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
+import ru.itmo.is.course_work.model.Flight;
 import ru.itmo.is.course_work.model.UserDoc;
 import ru.itmo.is.course_work.model.UserDocAddDto;
 import ru.itmo.is.course_work.model.UserDocType;
+import ru.itmo.is.course_work.repository.FlightRepository;
 import ru.itmo.is.course_work.repository.UserDocRepository;
 import ru.itmo.is.course_work.repository.UserDocTypeRepository;
 
@@ -20,6 +23,7 @@ public class UserDocService {
 
   private final UserDocRepository userDocRepository;
   private final UserDocTypeRepository userDocTypeRepository;
+  private final FlightRepository flightRepository;
 
   public List<UserDoc> getAllDocsForCurrentUser() {
     var currentUser = RoleService.getCurrentUser();
@@ -83,4 +87,24 @@ public class UserDocService {
   public List<UserDocType> getAllUserDocTypes() {
     return userDocTypeRepository.findAllByOrderById();
   }
+
+  public void validateDocumentForFlight(Long documentId, Long flightId) {
+      Flight flight = flightRepository.findById(flightId)
+              .orElseThrow(() -> new CustomException(ExceptionEnum.FLIGHT_NOT_FOUND));
+
+      UserDoc document = userDocRepository.findById(documentId)
+              .orElseThrow(() -> new CustomException(ExceptionEnum.USER_DOC_NOT_FOUND));
+
+      LocalDate flightDepartureDate = flight.getDepartureDatetime()
+               .atZone(ZoneId.systemDefault())
+               .toLocalDate();
+
+      if (document.getExpirationDate() != null &&
+              document.getExpirationDate().isBefore(flightDepartureDate)) {
+          throw new CustomException(ExceptionEnum.DOCUMENT_EXPIRED,
+                  "Document expires: " + document.getExpirationDate() +
+                          ", Flight departs: " + flightDepartureDate
+            );
+        }
+    }
 }

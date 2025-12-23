@@ -1,5 +1,6 @@
 package ru.itmo.is.course_work.service;
 
+import io.micrometer.core.instrument.Counter;
 import jakarta.validation.constraints.NotEmpty;
 import java.util.List;
 import lombok.NonNull;
@@ -17,6 +18,7 @@ import ru.itmo.is.course_work.repository.UserRepository;
 public class UserService {
 
   private final UserRepository userRepository;
+  private final Counter userBalanceTopupCounter;
 
   public @NonNull User getByLogin(@NonNull String login) {
     return userRepository
@@ -53,7 +55,8 @@ public class UserService {
             .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
 
     user.setBalance(user.getBalance() + amount);
-
+    user.setBalance(user.getBalance() + amount);
+    userBalanceTopupCounter.increment(amount);
     return userRepository.save(user);
   }
 

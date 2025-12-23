@@ -10,21 +10,25 @@ import ru.itmo.is.course_work.model.Flight;
 
 public interface FlightRepository extends JpaRepository<Flight, Long> {
 
-  @Query(
-      """
-           SELECT f
-           FROM Flight f
-           LEFT JOIN Ship s ON f.ship = s
-           LEFT JOIN FlightSchedule fs ON f.flightSchedule = fs
-           LEFT JOIN f.flightStatus fstatus
-           WHERE fs.planetDeparture.id = :departurePlanetId
-             AND fs.planetArrival.id = :arrivalPlanetId
-             AND (:airTypeId IS NULL OR s.airType.id = :airTypeId)
-             AND (:habitatId IS NULL OR s.habitat.id = :habitatId)
-             AND (:temperatureTypeId IS NULL OR s.temperatureType.id = :temperatureTypeId)
-             AND fstatus.name IN :neededStatusNames
-           ORDER BY f.departureDatetime ASC
-           """)
+    @Query("""
+            SELECT DISTINCT f
+            FROM Flight f
+            JOIN FETCH f.ship s
+            JOIN FETCH s.airType
+            JOIN FETCH s.habitat
+            JOIN FETCH s.temperatureType
+            JOIN FETCH f.flightSchedule fs
+            JOIN FETCH fs.planetDeparture
+            JOIN FETCH fs.planetArrival
+            JOIN FETCH f.flightStatus fstatus
+            WHERE fs.planetDeparture.id = :departurePlanetId
+              AND fs.planetArrival.id = :arrivalPlanetId
+              AND (:airTypeId IS NULL OR s.airType.id = :airTypeId)
+              AND (:habitatId IS NULL OR s.habitat.id = :habitatId)
+              AND (:temperatureTypeId IS NULL OR s.temperatureType.id = :temperatureTypeId)
+              AND fstatus.name IN :neededStatusNames
+            ORDER BY f.departureDatetime ASC
+            """)
   List<Flight> findAllAvailableForUser(
       Long departurePlanetId,
       Long arrivalPlanetId,
@@ -33,42 +37,40 @@ public interface FlightRepository extends JpaRepository<Flight, Long> {
       Long temperatureTypeId,
       List<String> neededStatusNames);
 
-  @Query(
-      """
-           SELECT f
-           FROM Flight f
-           JOIN f.flightStatus fs
-           WHERE fs.name = :statusName
-           ORDER BY f.id
-           """)
+    @Query("""
+            SELECT DISTINCT f
+            FROM Flight f
+            JOIN FETCH f.flightStatus fs
+            JOIN FETCH f.ship s
+            JOIN FETCH f.flightSchedule fs2
+            WHERE fs.name = :statusName
+            ORDER BY f.id
+            """)
   List<Flight> findByFlightStatusName(String statusName);
 
-  @Query(
-      """
-           SELECT f
-           FROM Flight f
-           LEFT JOIN f.flightStatus fs
-           WHERE fs.name IN :neededStatusNames
-           ORDER BY f.id
-           """)
-  @EntityGraph(
-      type = EntityGraphType.LOAD,
-      attributePaths = {"ship"})
-  List<Flight> findAllByFlightStatus_NameIn(List<String> neededStatusNames);
+    @Query("""
+            SELECT DISTINCT f
+            FROM Flight f
+            JOIN FETCH f.flightStatus fs
+            JOIN FETCH f.ship s
+            WHERE fs.name IN :neededStatusNames
+            ORDER BY f.id
+            """)
+    List<Flight> findAllByFlightStatus_NameIn(List<String> neededStatusNames);
 
   @EntityGraph(
       type = EntityGraphType.LOAD,
       attributePaths = {"ship", "flightSchedule"})
   List<Flight> findAllByOrderById();
 
-  @Query(
-      """
-           SELECT flight
-           FROM Flight flight
-           WHERE flight.id = :flightId
-           """)
-  @EntityGraph(
-      type = EntityGraphType.LOAD,
-      attributePaths = {"ship", "flightSchedule"})
-  Optional<Flight> findById(Long flightId);
+    @EntityGraph(attributePaths = {
+            "ship",
+            "flightSchedule",
+            "flightStatus",
+            "ship.airType",
+            "ship.habitat",
+            "ship.temperatureType"
+    })
+    @Override
+    Optional<Flight> findById(Long flightId);
 }

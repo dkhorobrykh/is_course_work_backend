@@ -1,6 +1,9 @@
 package ru.itmo.is.course_work.service;
 
 import jakarta.validation.Valid;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -72,7 +75,11 @@ public class ChatService {
 
     var newChat = Chat.builder().userFirst(currentUser).userSecond(secondUser).build();
 
-    return chatRepository.saveAndFlush(newChat);
+    Chat savedChat = chatRepository.saveAndFlush(newChat);
+
+    createWelcomeMessage(savedChat);
+
+    return savedChat;
   }
 
   public Optional<Chat> findChatByUserIds(Long firstUserId, Long secondUserId) {
@@ -83,4 +90,28 @@ public class ChatService {
 
     return res;
   }
+
+    private void createWelcomeMessage(Chat chat) {
+        String userFirstType = Optional.ofNullable(chat.getUserFirst().getPhysiologicalType())
+                .map(type -> type.getOutputName())
+                .orElse("незнакомец");
+
+        String userSecondType = Optional.ofNullable(chat.getUserSecond().getPhysiologicalType())
+                .map(type -> type.getOutputName())
+                .orElse("незнакомец");
+
+        String welcomeMessage = String.format(
+                "Добро пожаловать в новый чат! Похоже, что здесь собрались %s и %s!",
+                userFirstType, userSecondType
+        );
+
+        Message message = Message.builder()
+                .chat(chat)
+                .text(welcomeMessage)
+                .creationDatetime(Instant.from(LocalDateTime.now()))
+                .build();
+
+        messageRepository.saveAndFlush(message);
+        log.info("Created welcome message for chat id={}", chat.getId());
+    }
 }

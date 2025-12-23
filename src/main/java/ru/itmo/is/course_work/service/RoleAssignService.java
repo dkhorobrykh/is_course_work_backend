@@ -23,6 +23,7 @@ public class RoleAssignService {
   private final FlightService flightService;
   private final PlanetService planetService;
   private final UserService userService;
+  private final RoleBusinessService roleBusinessService;
 
   public List<Role> getAllRoles() {
     return roleRepository.findAllByOrderById();
@@ -55,7 +56,7 @@ public class RoleAssignService {
             .expirationDatetime(expirationDatetime)
             .build();
 
-    return roleRepository.saveAndFlush(newRole);
+    return roleBusinessService.createRole(newRole);
   }
 
   public void addRoleToUser(Long roleId, Long userId) {
@@ -86,10 +87,10 @@ public class RoleAssignService {
     var expirationDatetime =
         dto.getExpirationDatetime() != null ? dto.getExpirationDatetime() : null;
 
-    if (active != null) role.setActive(active);
+      Role roleUpdate = new Role();
+      if (active != null) roleUpdate.setActive(active);
+      if (expirationDatetime != null) roleUpdate.setExpirationDatetime(expirationDatetime);
 
-    if (expirationDatetime != null) role.setExpirationDatetime(expirationDatetime);
-
-    roleRepository.saveAndFlush(role);
+      roleBusinessService.updateRole(roleId, roleUpdate);
   }
 }

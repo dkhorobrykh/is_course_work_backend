@@ -3,6 +3,8 @@ package ru.itmo.is.course_work.service;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.List;
+
+import io.micrometer.core.instrument.Counter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class FlightService {
   private final CargoStatusService cargoStatusService;
   private final HashMap<String, String> flightStatuses = new HashMap<>();
   private final HashMap<String, String> cargoStatuses = new HashMap<>();
+  private final Counter flightStatusChangeCounter;
+  private final Counter cargoStatusChangeCounter;
 
   {
     flightStatuses.put(FlightStatus.PLANNED, FlightStatus.APPROVED);
@@ -159,6 +163,7 @@ public class FlightService {
         oldStatus.getOutputName(),
         newStatus.getOutputName());
 
+    flightStatusChangeCounter.increment();
     return flightRepository.saveAndFlush(flight);
   }
 
@@ -213,6 +218,7 @@ public class FlightService {
         oldStatus.getOutputName(),
         newStatus.getOutputName());
 
+    cargoStatusChangeCounter.increment();
     return flightRepository.saveAndFlush(flight);
   }
 }

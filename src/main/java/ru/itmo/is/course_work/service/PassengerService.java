@@ -1,5 +1,6 @@
 package ru.itmo.is.course_work.service;
 
+import io.micrometer.core.instrument.Counter;
 import jakarta.validation.Valid;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -25,6 +26,8 @@ public class PassengerService {
   private final FlightService flightService;
   private final ServiceClassService serviceClassService;
   private final UserRepository userRepository;
+  private final Counter flightBookingCounter;
+  private final Counter bookingErrorCounter;
 
   public List<Passenger> getAllBooksByCurrentUser() {
     var currentUser = RoleService.getCurrentUser();
@@ -41,42 +44,46 @@ public class PassengerService {
 
   @Transactional
   public Passenger bookFlight(@Valid BookingFlightDto dto) {
-    var currentUser = RoleService.getCurrentUser();
-    if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
+      try {
+          var currentUser = RoleService.getCurrentUser();
+          if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-    var userDoc = userDocService.getUserDocById(dto.getUserDocId());
-    var flight = flightService.getFlightById(dto.getFlightId());
-    var serviceClass = serviceClassService.getServiceClassById(dto.getServiceClassId());
+          var userDoc = userDocService.getUserDocById(dto.getUserDocId());
+          var flight = flightService.getFlightById(dto.getFlightId());
+          var serviceClass = serviceClassService.getServiceClassById(dto.getServiceClassId());
 
-    double flightCost = serviceClass.getCost();
+          double flightCost = serviceClass.getCost();
 
-    ZoneId zoneId = ZoneId.systemDefault();
-    LocalDate departureDate =
-        flight.getFlightSchedule().getDepartureDatetime().atZone(zoneId).toLocalDate();
+          ZoneId zoneId = ZoneId.systemDefault();
+          LocalDate departureDate =
+                  flight.getFlightSchedule().getDepartureDatetime().atZone(zoneId).toLocalDate();
 
-    if (userDoc.getExpirationDate().isBefore(departureDate)) {
-      throw new CustomException(ExceptionEnum.DOCUMENT_EXPIRED);
-    }
+          userDocService.validateDocumentForFlight(dto.getUserDocId(), dto.getFlightId());
 
-    if (currentUser.getBalance() < flightCost) {
-      throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);
-    }
+          if (currentUser.getBalance() < flightCost) {
+              throw new CustomException(ExceptionEnum.INSUFFICIENT_BALANCE);
+          }
 
-    if (flight.getBookedSeats() >= flight.getTotalSeats())
-      throw new CustomException(ExceptionEnum.NO_FREE_SEATS);
+          if (flight.getBookedSeats() >= flight.getTotalSeats())
+              throw new CustomException(ExceptionEnum.NO_FREE_SEATS);
 
-    flight.setBookedSeats(flight.getBookedSeats() + 1);
+          flight.setBookedSeats(flight.getBookedSeats() + 1);
 
-    var newPassenger =
-        Passenger.builder()
-            .userDoc(userDoc)
-            .flight(flight)
-            .serviceClass(serviceClass)
-            .user(currentUser)
-            .build();
+          var newPassenger =
+                  Passenger.builder()
+                          .userDoc(userDoc)
+                          .flight(flight)
+                          .serviceClass(serviceClass)
+                          .user(currentUser)
+                          .build();
 
-    currentUser.setBalance(currentUser.getBalance() - flightCost);
-    userRepository.save(currentUser);
-    return passengerRepository.saveAndFlush(newPassenger);
+          currentUser.setBalance(currentUser.getBalance() - flightCost);
+          userRepository.save(currentUser);
+          flightBookingCounter.increment();
+          return passengerRepository.saveAndFlush(newPassenger);
+      } catch (Exception e) {
+          bookingErrorCounter.increment();
+          throw new RuntimeException(e);
+      }
   }
 }

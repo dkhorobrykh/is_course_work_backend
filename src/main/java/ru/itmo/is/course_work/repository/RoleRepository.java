@@ -8,4 +8,5 @@ import ru.itmo.is.course_work.model.Role;
 public interface RoleRepository
     extends RevisionRepository<Role, Long, Long>, JpaRepository<Role, Long> {
   List<Role> findAllByOrderById();
+  List<Role> findByActiveTrue();
 }
