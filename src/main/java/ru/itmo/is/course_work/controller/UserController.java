@@ -23,9 +23,10 @@ public class UserController {
 
   private final UserService userService;
   private final UserMapper userMapper;
+  private final RoleService roleService;
 
   @GetMapping("all")
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Получить список всех пользователей")
   public ResponseEntity<List<UserDto>> getAllUsers() {
     var users = userService.getAll();
@@ -53,7 +54,7 @@ public class UserController {
   @GetMapping
   @Operation(summary = "Получить текущего пользователя")
   public ResponseEntity<UserDto> getCurrentUser() {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     var user = userService.getById(currentUser.getId());

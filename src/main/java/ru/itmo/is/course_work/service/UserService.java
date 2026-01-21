@@ -20,6 +20,11 @@ public class UserService {
   private final UserRepository userRepository;
   private final Counter userBalanceTopupCounter;
 
+  public User getCurrentUser(String keycloakId) {
+      return userRepository.findByKeycloakId(keycloakId)
+              .orElseThrow(() -> new CustomException(ExceptionEnum.USER_NOT_FOUND));
+  }
+
   public @NonNull User getByLogin(@NonNull String login) {
     return userRepository
         .findByLogin(login)

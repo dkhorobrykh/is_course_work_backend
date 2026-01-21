@@ -26,6 +26,7 @@ public class InsuranceService {
   private final CargoService cargoService;
   private final FlightService flightService;
   private final UserService userService;
+  private final RoleService roleService;
 
   public InsuranceProgram getInsuranceProgramById(Long id) {
     return insuranceProgramRepository
@@ -34,7 +35,7 @@ public class InsuranceService {
   }
 
   public InsuranceIssued issueNewInsurance(@Valid InsuranceIssueRequestDto dto) {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
 
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 

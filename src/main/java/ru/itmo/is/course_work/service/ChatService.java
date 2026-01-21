@@ -14,6 +14,7 @@ import ru.itmo.is.course_work.exception.CustomException;
 import ru.itmo.is.course_work.exception.ExceptionEnum;
 import ru.itmo.is.course_work.model.Chat;
 import ru.itmo.is.course_work.model.Message;
+import ru.itmo.is.course_work.model.PhysiologicalType;
 import ru.itmo.is.course_work.model.dto.NewMessageDto;
 import ru.itmo.is.course_work.repository.ChatRepository;
 import ru.itmo.is.course_work.repository.MessageRepository;
@@ -26,9 +27,10 @@ public class ChatService {
   private final ChatRepository chatRepository;
   private final MessageRepository messageRepository;
   private final UserService userService;
+  private final RoleService roleService;
 
   public List<Chat> getAllChatsForCurrentUser() {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
 
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
@@ -37,7 +39,7 @@ public class ChatService {
   }
 
   public Chat sendMessage(Long chatId, @Valid NewMessageDto dto) {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
 
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
@@ -61,7 +63,7 @@ public class ChatService {
   }
 
   public Chat createChat(Long secondUserId) {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
 
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
@@ -93,11 +95,11 @@ public class ChatService {
 
     private void createWelcomeMessage(Chat chat) {
         String userFirstType = Optional.ofNullable(chat.getUserFirst().getPhysiologicalType())
-                .map(type -> type.getOutputName())
+                .map(PhysiologicalType::getOutputName)
                 .orElse("незнакомец");
 
         String userSecondType = Optional.ofNullable(chat.getUserSecond().getPhysiologicalType())
-                .map(type -> type.getOutputName())
+                .map(PhysiologicalType::getOutputName)
                 .orElse("незнакомец");
 
         String welcomeMessage = String.format(

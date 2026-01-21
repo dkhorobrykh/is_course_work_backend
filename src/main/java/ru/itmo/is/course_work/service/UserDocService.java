@@ -24,16 +24,17 @@ public class UserDocService {
   private final UserDocRepository userDocRepository;
   private final UserDocTypeRepository userDocTypeRepository;
   private final FlightRepository flightRepository;
+  private final RoleService roleService;
 
   public List<UserDoc> getAllDocsForCurrentUser() {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
-    return userDocRepository.findAllByUser_IdOrderById(RoleService.getCurrentUser().getId());
+    return userDocRepository.findAllByUser_IdOrderById(roleService.getCurrentUser().getId());
   }
 
   public UserDoc addNewDoc(UserDocAddDto dto) {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     var userDocType = getUserDocTypeByName(dto.getUserDocTypeName());

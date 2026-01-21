@@ -9,17 +9,21 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.itmo.is.course_work.filter.ExceptionHandlerFilter;
-import ru.itmo.is.course_work.filter.JwtFilter;
+
+import java.util.List;
+import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-  private final JwtFilter jwtFilter;
   private final ExceptionHandlerFilter exceptionHandlerFilter;
 
   @Bean
@@ -46,10 +50,28 @@ public class SecurityConfig {
                     .authenticated()
                     .anyRequest()
                     .authenticated())
-        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-        //                .addFilterAfter(headersFilter, JwtFilter.class)
-        .addFilterBefore(exceptionHandlerFilter, JwtFilter.class);
+        .addFilterBefore(exceptionHandlerFilter, UsernamePasswordAuthenticationFilter.class)
+        .oauth2ResourceServer(oauth ->
+            oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter()))
+        );
 
     return http.build();
   }
+
+    @Bean
+    @SuppressWarnings("unchecked")
+    JwtAuthenticationConverter jwtAuthConverter() {
+        JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        converter.setJwtGrantedAuthoritiesConverter(jwt -> {
+            Map<String, Object> realmAccess = jwt.getClaim("realm_access");
+            if (realmAccess == null) return List.of();
+
+            List<String> roles = (List<String>) realmAccess.get("roles");
+
+            return roles.stream()
+                    .map(r -> (GrantedAuthority) new SimpleGrantedAuthority("ROLE_" + r))
+                    .toList();
+        });
+        return converter;
+    }
 }

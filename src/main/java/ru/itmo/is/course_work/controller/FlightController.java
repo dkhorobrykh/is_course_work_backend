@@ -67,7 +67,7 @@ public class FlightController {
 
   @PostMapping("{flightId}/status-change")
   @PreAuthorize(
-      "@RoleService.hasAdminRole() || @RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
+      "@roleService.hasAdminRole() || @roleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
   @Operation(summary = "Изменить статус рейса [{flightId}]")
   public ResponseEntity<FlightDto> changeStatus(@PathVariable Long flightId) {
     var result = flightService.changeStatus(flightId);
@@ -77,7 +77,7 @@ public class FlightController {
 
   @PostMapping("{flightId}/cargo/status-change")
   @PreAuthorize(
-      "@RoleService.hasAdminRole() || @RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
+      "@roleService.hasAdminRole() || @roleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
   @Operation(summary = "Изменить статус груза на рейсе [{flightId}]")
   public ResponseEntity<FlightDto> changeCargoStatus(@PathVariable Long flightId) {
     var result = flightService.changeCargoStatus(flightId);

@@ -27,7 +27,7 @@ public class InsuranceController {
   private final InsuranceProgramMapper insuranceProgramMapper;
 
   @GetMapping
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Получить все оформленные страховки")
   public ResponseEntity<List<InsuranceIssuedDto>> getAllIssuedInsurances() {
     var result = insuranceService.getAllIssuedInsurances();
@@ -36,7 +36,7 @@ public class InsuranceController {
   }
 
   @GetMapping("/user/{userId}")
-  @PreAuthorize("@RoleService.hasAdminRole() || @RoleService.userIdEqualsCurrent(#userId)")
+  @PreAuthorize("@roleService.hasAdminRole() || @roleService.userIdEqualsCurrent(#userId)")
   @Operation(summary = "Получить все страховки, оформленные пользователем с [{userId}]")
   public ResponseEntity<List<InsuranceIssuedDto>> getAllIssuedInsuranceByUserId(
       @PathVariable Long userId) {
@@ -46,7 +46,7 @@ public class InsuranceController {
   }
 
   @GetMapping("/flight/{flightId}")
-  @PreAuthorize("@RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
+  @PreAuthorize("@roleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
   @Operation(summary = "Получить все страховки, оформленные на рейсе с [{flightId}]")
   public ResponseEntity<List<InsuranceIssuedDto>> getAllIssuedInsuranceByFlightId(
       @PathVariable Long flightId) {
@@ -57,7 +57,7 @@ public class InsuranceController {
 
   @GetMapping("/flight/{flightId}/user/{userId}")
   @PreAuthorize(
-      "(@RoleService.hasAdminRole() || @RoleService.userIdEqualsCurrent(#userId)) && @RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
+      "(@roleService.hasAdminRole() || @roleService.userIdEqualsCurrent(#userId)) && @roleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
   @Operation(
       summary =
           "Получить все страховки, оформленные на рейсе с [{flightId}] пользователем с [{userId}]")
@@ -95,7 +95,7 @@ public class InsuranceController {
   }
 
   @PostMapping("programs")
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Добавить новую программу страхования")
   public ResponseEntity<InsuranceProgramDto> addNewInsuranceProgram(
       @Valid @RequestBody InsuranceProgramAddDto dto) {

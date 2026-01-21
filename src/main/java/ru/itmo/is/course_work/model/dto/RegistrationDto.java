@@ -16,11 +16,6 @@ public class RegistrationDto {
 
   @NotNull
   @NotEmpty
-  @Length(min = 4)
-  String password;
-
-  @NotNull
-  @NotEmpty
   @Length(max = 100)
   String firstName;
 
@@ -36,4 +31,8 @@ public class RegistrationDto {
 
   @NotNull LocalDate dateOfBirth;
   @NotNull @Email @NotEmpty String email;
+
+  @NotNull
+  @NotEmpty
+  String keycloakId;
 }

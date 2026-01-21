@@ -51,7 +51,7 @@ public class CargoController {
 
   @GetMapping("{flightId}")
   @PreAuthorize(
-      "@RoleService.hasAdminRole() || @RoleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
+      "@roleService.hasAdminRole() || @roleService.hasAccessToFlight(@flightService.getFlightById(#flightId))")
   @Operation(summary = "Получить список грузов, относящихся к рейсу [{flightId}]")
   public ResponseEntity<List<CargoDto>> getAllByFlightId(@PathVariable Long flightId) {
     var result = cargoService.getAllByFlightId(flightId);
@@ -60,7 +60,7 @@ public class CargoController {
   }
 
   @GetMapping
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Получить все грузы, зарегистрированные в системе")
   public ResponseEntity<List<CargoDto>> getAllCargo() {
     var result = cargoService.getAllCargo();

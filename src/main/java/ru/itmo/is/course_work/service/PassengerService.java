@@ -28,9 +28,10 @@ public class PassengerService {
   private final UserRepository userRepository;
   private final Counter flightBookingCounter;
   private final Counter bookingErrorCounter;
+  private final RoleService roleService;
 
   public List<Passenger> getAllBooksByCurrentUser() {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     return passengerRepository.findAllByUser_Id(currentUser.getId());
@@ -45,7 +46,7 @@ public class PassengerService {
   @Transactional
   public Passenger bookFlight(@Valid BookingFlightDto dto) {
       try {
-          var currentUser = RoleService.getCurrentUser();
+          var currentUser = roleService.getCurrentUser();
           if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
           var userDoc = userDocService.getUserDocById(dto.getUserDocId());

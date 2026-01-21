@@ -1,41 +1,110 @@
+version: "3.9"
+
 services:
-  postgres:
+
+  # ======================
+  # BUSINESS DATABASE
+  # ======================
+  postgres_app:
     image: postgres:16
     container_name: course_work_postgres
     restart: unless-stopped
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_DB: course_work
       POSTGRES_USER: course_user
       POSTGRES_PASSWORD: course_pass
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - pgdata_app:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U course_user" ]
+      test: ["CMD-SHELL", "pg_isready -U course_user -d course_work"]
       interval: 10s
       timeout: 5s
       retries: 5
     networks:
-      - monitoring-net
+      - backend-net
 
+  # ======================
+  # KEYCLOAK DATABASE
+  # ======================
+  postgres_keycloak:
+    image: postgres:16
+    container_name: keycloak_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak_user
+      POSTGRES_PASSWORD: keycloak_pass
+    volumes:
+      - pgdata_keycloak:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U keycloak_user -d keycloak" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - auth-net
+
+  # ======================
+  # SPRING BACKEND
+  # ======================
   app:
     build: .
     container_name: course_work_app
     restart: unless-stopped
     depends_on:
-      postgres:
+      postgres_app:
         condition: service_healthy
     ports:
-      - "8081:8081"
+      - "8079:8079"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/course_work
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres_app:5432/course_work
       SPRING_DATASOURCE_USERNAME: course_user
       SPRING_DATASOURCE_PASSWORD: course_pass
-      BACKEND_URL: 0.0.0.0
-    networks:
-      - monitoring-net
 
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://host.docker.internal:8080/realms/refactoring
+
+      JWT_ACCESS_PRIVATE: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2FC+e7DL4k7Zgotx9jq83bAXnnU5LC7wsBiQhrZHSfxW/nKvxw3WT7Z/gVszwjOFQ3fFpg+UbXTRAcn/zicyZUpafyHKGE78O9qf+u+bkyFuDO8tveuS+lnQpndILIk0lNXmUmORiAHA51CfzBLudDz88xlUawoW9DUMKngRvhjanKL9EY/GLKKQuZjga9HyFX8fZT3n2v6Qi5lTUAEqmE/o356PNXmW+MJo7T+XI0NhNtnKZ/bdI4ZZfWPRZ5rQSAayNKR/+I/xreur8YYubjblwVPcnBqcmblPH7hXmNivEXwAM+CXESAE5e1NqsNSi8N+z9O+wTni19oVZYGCrAgMBAAECggEANF8hBWq2DIbcPfaKSjkYz+2r0x+NjgttkBIiIWe92liAhnFHic4pSyfdxRbicsxq4Ko+DpYH97N63JCymffIWE+HkKUEv+j9Gw46awxcEPFKVTiFPucP1XwMJI5HBLnUi7/SXToO8ttibFfIN9/kIPxqOY5omz5ZXnPqlSq3ZuYrokKHXErDA0t9bks3exlRA3o7+aVW+eHHUEnYiOyMlmxgTtQ1Er0WX8Goaw3yCt4l9vVXperCSWrU7wxT2z8uCWIGXpNiS6pph3PvGbX36o5kW+78Tn/a47uBOpvVOxphgrdEcXxsyCLBcKkH9OaPjeFqG3OVKl5s1wzO/QmfWQKBgQD8wBvYEBKvc0g9VKvXbwq0zfQbtzlGci3jYmHToZNbLvrD/2yKYThmzx22Nqx7x/ng3VUlfS6+o8eI3wczrN4TIN6fyp9rax29aDM4y/d1Ow34Fxpk4LPZ1r8/uwx/48/w0lHnJGVlqvVy/tlO4+g7l8QA3YLXB2vrpOiF5EcAeQKBgQC4a3jYsG9jpmeBNNu20L8TGRvd8r2dHD84qRbIeIU14XY3ChpkwuDc0Jy5Who/0V+FbA6rQZDDSNq1VMpH/4qzAo9WcJUrSba8eMCTYvCblNPVY5YId2NDW+Mv+GobRq5HwCqCtgc73UaOX24EJaz5wh6CWyN6G4fZviE/bj8JQwKBgE0GLnYVz9vwAd/O4d9xU43uBao8mBPD0AAvhyh7YPC0zG7WdDlnj0ylaaSR3NaMBrZkPQKDt68ZMkGf1g4FbFff+Hgxw4t0xUdnbdStM+hh6svkHoMHh0enjfjaA+Elh8UYEyWhjdUB2HMG/ypvgeJHSdAJsUneVSEmzEWhX5HhAoGANRjUWWcrGwDNKjlCzTb63I/NIzEBgNuiJDki0yNID0RT2fLxuHMXdNwnU4Jqrlck7nA3JP2ipWczeSPpfaNIltO020lc2XLGxyrpH0ZMSi8mcnjSuKtPDBTHq4cVXbcS9JuSYcHxAT5rUxCMx2rli59lU1jUNRL6ISoJvo6KXasCgYEA6kWn/trHAxhOvn1EgYmN5N/wQXj0Iw9nbR59vUoLQyM52Y9/fBRCnHZNcUrOaehvaIMBgBfYc5q1sFOuBRQBBp3Q4IZwiwMVjpnK9C7sPsp/5lQfxL9UBXReUjQgC37U9E/BO9w6TitIoL+lxG47tM3lfSykXq/oKoIMfE7+FOg=
+      JWT_ACCESS_PUBLIC: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAthQvnuwy+JO2YKLcfY6vN2wF551OSwu8LAYkIa2R0n8Vv5yr8cN1k+2f4FbM8IzhUN3xaYPlG100QHJ/84nMmVKWn8hyhhO/Dvan/rvm5MhbgzvLb3rkvpZ0KZ3SCyJNJTV5lJjkYgBwOdQn8wS7nQ8/PMZVGsKFvQ1DCp4Eb4Y2pyi/RGPxiyikLmY4GvR8hV/H2U959r+kIuZU1ABKphP6N+ejzV5lvjCaO0/lyNDYTbZymf23SOGWX1j0Wea0EgGsjSkf/iP8a3rq/GGLm425cFT3JwanJm5Tx+4V5jYrxF8ADPglxEgBOXtTarDUovDfs/TvsE54tfaFWWBgqwIDAQAB
+      JWT_ACCESS_LIFETIME: 3600
+      JWT_REFRESH_PRIVATE: MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC2FC+e7DL4k7Zgotx9jq83bAXnnU5LC7wsBiQhrZHSfxW/nKvxw3WT7Z/gVszwjOFQ3fFpg+UbXTRAcn/zicyZUpafyHKGE78O9qf+u+bkyFuDO8tveuS+lnQpndILIk0lNXmUmORiAHA51CfzBLudDz88xlUawoW9DUMKngRvhjanKL9EY/GLKKQuZjga9HyFX8fZT3n2v6Qi5lTUAEqmE/o356PNXmW+MJo7T+XI0NhNtnKZ/bdI4ZZfWPRZ5rQSAayNKR/+I/xreur8YYubjblwVPcnBqcmblPH7hXmNivEXwAM+CXESAE5e1NqsNSi8N+z9O+wTni19oVZYGCrAgMBAAECggEANF8hBWq2DIbcPfaKSjkYz+2r0x+NjgttkBIiIWe92liAhnFHic4pSyfdxRbicsxq4Ko+DpYH97N63JCymffIWE+HkKUEv+j9Gw46awxcEPFKVTiFPucP1XwMJI5HBLnUi7/SXToO8ttibFfIN9/kIPxqOY5omz5ZXnPqlSq3ZuYrokKHXErDA0t9bks3exlRA3o7+aVW+eHHUEnYiOyMlmxgTtQ1Er0WX8Goaw3yCt4l9vVXperCSWrU7wxT2z8uCWIGXpNiS6pph3PvGbX36o5kW+78Tn/a47uBOpvVOxphgrdEcXxsyCLBcKkH9OaPjeFqG3OVKl5s1wzO/QmfWQKBgQD8wBvYEBKvc0g9VKvXbwq0zfQbtzlGci3jYmHToZNbLvrD/2yKYThmzx22Nqx7x/ng3VUlfS6+o8eI3wczrN4TIN6fyp9rax29aDM4y/d1Ow34Fxpk4LPZ1r8/uwx/48/w0lHnJGVlqvVy/tlO4+g7l8QA3YLXB2vrpOiF5EcAeQKBgQC4a3jYsG9jpmeBNNu20L8TGRvd8r2dHD84qRbIeIU14XY3ChpkwuDc0Jy5Who/0V+FbA6rQZDDSNq1VMpH/4qzAo9WcJUrSba8eMCTYvCblNPVY5YId2NDW+Mv+GobRq5HwCqCtgc73UaOX24EJaz5wh6CWyN6G4fZviE/bj8JQwKBgE0GLnYVz9vwAd/O4d9xU43uBao8mBPD0AAvhyh7YPC0zG7WdDlnj0ylaaSR3NaMBrZkPQKDt68ZMkGf1g4FbFff+Hgxw4t0xUdnbdStM+hh6svkHoMHh0enjfjaA+Elh8UYEyWhjdUB2HMG/ypvgeJHSdAJsUneVSEmzEWhX5HhAoGANRjUWWcrGwDNKjlCzTb63I/NIzEBgNuiJDki0yNID0RT2fLxuHMXdNwnU4Jqrlck7nA3JP2ipWczeSPpfaNIltO020lc2XLGxyrpH0ZMSi8mcnjSuKtPDBTHq4cVXbcS9JuSYcHxAT5rUxCMx2rli59lU1jUNRL6ISoJvo6KXasCgYEA6kWn/trHAxhOvn1EgYmN5N/wQXj0Iw9nbR59vUoLQyM52Y9/fBRCnHZNcUrOaehvaIMBgBfYc5q1sFOuBRQBBp3Q4IZwiwMVjpnK9C7sPsp/5lQfxL9UBXReUjQgC37U9E/BO9w6TitIoL+lxG47tM3lfSykXq/oKoIMfE7+FOg=
+      JWT_REFRESH_PUBLIC: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAthQvnuwy+JO2YKLcfY6vN2wF551OSwu8LAYkIa2R0n8Vv5yr8cN1k+2f4FbM8IzhUN3xaYPlG100QHJ/84nMmVKWn8hyhhO/Dvan/rvm5MhbgzvLb3rkvpZ0KZ3SCyJNJTV5lJjkYgBwOdQn8wS7nQ8/PMZVGsKFvQ1DCp4Eb4Y2pyi/RGPxiyikLmY4GvR8hV/H2U959r+kIuZU1ABKphP6N+ejzV5lvjCaO0/lyNDYTbZymf23SOGWX1j0Wea0EgGsjSkf/iP8a3rq/GGLm425cFT3JwanJm5Tx+4V5jYrxF8ADPglxEgBOXtTarDUovDfs/TvsE54tfaFWWBgqwIDAQAB
+      JWT_REFRESH_LIFETIME: 360000
+    networks:
+      - backend-net
+      - auth-net
+
+  # ======================
+  # KEYCLOAK
+  # ======================
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    restart: unless-stopped
+    command: start-dev
+    depends_on:
+      postgres_keycloak:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres_keycloak:5432/keycloak
+      KC_DB_USERNAME: keycloak_user
+      KC_DB_PASSWORD: keycloak_pass
+
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+    volumes:
+      - ./keycloak-themes:/opt/keycloak/themes
+    networks:
+      - auth-net
+
+  # ======================
+  # OBSERVABILITY
+  # ======================
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
@@ -45,7 +114,7 @@ services:
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
-      - monitoring-net
+      - backend-net
 
   grafana:
     image: grafana/grafana:latest
@@ -56,11 +125,20 @@ services:
     environment:
       GF_SECURITY_ADMIN_PASSWORD: admin
     networks:
-      - monitoring-net
+      - backend-net
 
+# ======================
+# VOLUMES
+# ======================
 volumes:
-  pgdata:
+  pgdata_app:
+  pgdata_keycloak:
 
+# ======================
+# NETWORKS
+# ======================
 networks:
-  monitoring-net:
+  backend-net:
+    driver: bridge
+  auth-net:
     driver: bridge

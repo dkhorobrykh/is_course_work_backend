@@ -26,6 +26,7 @@ public class CargoService {
   private final UserService userService;
   private final NatureService natureService;
   private final FlightService flightService;
+  private final RoleService roleService;
 
   public Cargo getCargoById(Long id) {
     return cargoRepository
@@ -34,14 +35,14 @@ public class CargoService {
   }
 
   public List<Cargo> getAllWhereCurrentUserIsSender() {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     return cargoRepository.findAllBySender_IdOrderById(currentUser.getId());
   }
 
   public List<Cargo> getAllWhereCurrentUserIsRecipient() {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     return cargoRepository.findAllByRecipient_IdOrderById(currentUser.getId());
@@ -56,7 +57,7 @@ public class CargoService {
   }
 
   public Cargo addCargo(@Valid CargoAddDto dto) {
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     var recipient = userService.getById(dto.getRecipientId());

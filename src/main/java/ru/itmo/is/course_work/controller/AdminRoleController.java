@@ -26,7 +26,7 @@ public class AdminRoleController {
   private final RoleMapper roleMapper;
 
   @GetMapping
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Получить существующие роли")
   public ResponseEntity<List<RoleDto>> getRoles() {
     var result = roleAssignService.getAllRoles();
@@ -35,7 +35,7 @@ public class AdminRoleController {
   }
 
   @PostMapping
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Добавить новую роль")
   public ResponseEntity<List<RoleDto>> addNewRole(@Valid @RequestBody RoleAddDto dto) {
     roleAssignService.addRole(dto);
@@ -45,7 +45,7 @@ public class AdminRoleController {
   }
 
   @PutMapping("{roleId}")
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Изменить роль [{roleId}]")
   public ResponseEntity<List<RoleDto>> editRole(
       @PathVariable Long roleId, @Valid @RequestBody RoleEditDto dto) {
@@ -56,7 +56,7 @@ public class AdminRoleController {
   }
 
   @PostMapping("/add/{roleId}/to/{userId}")
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Добавить роль [{roleId}] пользователю [{userId}]")
   public ResponseEntity<List<RoleDto>> addRoleToUser(
       @PathVariable Long roleId, @PathVariable Long userId) {
@@ -67,7 +67,7 @@ public class AdminRoleController {
   }
 
   @DeleteMapping("/delete/{roleId}/from/{userId}")
-  @PreAuthorize("@RoleService.hasAdminRole()")
+  @PreAuthorize("@roleService.hasAdminRole()")
   @Operation(summary = "Убрать роль [{roleId}] у пользователя [{userId}]")
   public ResponseEntity<List<RoleDto>> deleteRoleFromUser(
       @PathVariable Long roleId, @PathVariable Long userId) {

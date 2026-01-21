@@ -75,4 +75,7 @@ public class User {
 
   @Column(name = "balance", nullable = false)
   private Double balance = 10000.0;
+
+  @Column(name = "keycloak_id", nullable = false, unique = true)
+  private String keycloakId;
 }

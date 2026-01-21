@@ -46,7 +46,7 @@ public class UserDocController {
 
   @DeleteMapping("{documentId}")
   @PreAuthorize(
-      "@RoleService.hasAdminRole() || @RoleService.userIdEqualsCurrent(@userDocService.getUserDocById(#documentId).user.id)")
+      "@roleService.hasAdminRole() || @roleService.userIdEqualsCurrent(@userDocService.getUserDocById(#documentId).user.id)")
   @Operation(summary = "Удалить документ по его [{documentId}]")
   public ResponseEntity<List<UserDocDto>> deleteDocById(@PathVariable Long documentId) {
     userDocService.deleteDocById(documentId);

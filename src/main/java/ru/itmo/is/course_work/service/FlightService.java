@@ -30,6 +30,7 @@ public class FlightService {
   private final HashMap<String, String> cargoStatuses = new HashMap<>();
   private final Counter flightStatusChangeCounter;
   private final Counter cargoStatusChangeCounter;
+  private final RoleService roleService;
 
   {
     flightStatuses.put(FlightStatus.PLANNED, FlightStatus.APPROVED);
@@ -87,7 +88,7 @@ public class FlightService {
     var departure = planetService.getPlanetById(departurePlanetId);
     var arrival = planetService.getPlanetById(arrivalPlanetId);
 
-    var currentUser = RoleService.getCurrentUser();
+    var currentUser = roleService.getCurrentUser();
     if (currentUser == null) throw new CustomException(ExceptionEnum.UNAUTHORIZED);
 
     var type = currentUser.getPhysiologicalType();
